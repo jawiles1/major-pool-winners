@@ -1,0 +1,44 @@
+[
+  {
+    "id": "m1",
+    "teamId": "1",
+    "displayName": "Josh Wiles",
+    "teamName": "Wedgies",
+    "initialDraftOrder": 1
+  },
+  {
+    "id": "m2",
+    "teamId": "3",
+    "displayName": "Ed Buckingham",
+    "teamName": "Team Buckingham",
+    "initialDraftOrder": 2
+  },
+  {
+    "id": "m3",
+    "teamId": "5",
+    "displayName": "Joe Connors",
+    "teamName": "Team Connors",
+    "initialDraftOrder": 3
+  },
+  {
+    "id": "m4",
+    "teamId": "2",
+    "displayName": "David Bosco",
+    "teamName": "Team Bosco",
+    "initialDraftOrder": 4
+  },
+  {
+    "id": "m5",
+    "teamId": "4",
+    "displayName": "Jeff Churba",
+    "teamName": "Team Churba",
+    "initialDraftOrder": 5
+  },
+  {
+    "id": "m6",
+    "teamId": "6",
+    "displayName": "Taylor Fyfe",
+    "teamName": "Eat my new fade",
+    "initialDraftOrder": 6
+  }
+]
