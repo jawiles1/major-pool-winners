@@ -1,0 +1,427 @@
+[
+  {
+    "id": "p1",
+    "memberId": "m1",
+    "golferId": "g_scottie_scheffler",
+    "leagueTermId": "term_2025_2028",
+    "acquiredYear": 2025,
+    "acquisitionType": "initial_draft",
+    "draftYear": 2025,
+    "startYear": 2025
+  },
+  {
+    "id": "p2",
+    "memberId": "m1",
+    "golferId": "g_shane_lowry",
+    "leagueTermId": "term_2025_2028",
+    "acquiredYear": 2025,
+    "acquisitionType": "initial_draft",
+    "draftYear": 2025,
+    "startYear": 2025,
+    "endYear": 2025,
+    "droppedAfterYear": 2025,
+    "replacementDraftPickId": "rdp_2025_06"
+  },
+  {
+    "id": "p3",
+    "memberId": "m1",
+    "golferId": "g_joaquin_niemann",
+    "leagueTermId": "term_2025_2028",
+    "acquiredYear": 2025,
+    "acquisitionType": "initial_draft",
+    "draftYear": 2025,
+    "startYear": 2025
+  },
+  {
+    "id": "p4",
+    "memberId": "m1",
+    "golferId": "g_akshay_bhatia",
+    "leagueTermId": "term_2025_2028",
+    "acquiredYear": 2025,
+    "acquisitionType": "initial_draft",
+    "draftYear": 2025,
+    "startYear": 2025
+  },
+  {
+    "id": "p5",
+    "memberId": "m1",
+    "golferId": "g_jason_day",
+    "leagueTermId": "term_2025_2028",
+    "acquiredYear": 2025,
+    "acquisitionType": "initial_draft",
+    "draftYear": 2025,
+    "startYear": 2025
+  },
+  {
+    "id": "p6",
+    "memberId": "m1",
+    "golferId": "g_nick_dunlap",
+    "leagueTermId": "term_2025_2028",
+    "acquiredYear": 2025,
+    "acquisitionType": "initial_draft",
+    "draftYear": 2025,
+    "startYear": 2025
+  },
+  {
+    "id": "p7",
+    "memberId": "m2",
+    "golferId": "g_rory_mcilroy",
+    "leagueTermId": "term_2025_2028",
+    "acquiredYear": 2025,
+    "acquisitionType": "initial_draft",
+    "draftYear": 2025,
+    "startYear": 2025
+  },
+  {
+    "id": "p8",
+    "memberId": "m2",
+    "golferId": "g_russell_henley",
+    "leagueTermId": "term_2025_2028",
+    "acquiredYear": 2025,
+    "acquisitionType": "initial_draft",
+    "draftYear": 2025,
+    "startYear": 2025
+  },
+  {
+    "id": "p9",
+    "memberId": "m2",
+    "golferId": "g_tommy_fleetwood",
+    "leagueTermId": "term_2025_2028",
+    "acquiredYear": 2025,
+    "acquisitionType": "initial_draft",
+    "draftYear": 2025,
+    "startYear": 2025
+  },
+  {
+    "id": "p10",
+    "memberId": "m2",
+    "golferId": "g_sepp_straka",
+    "leagueTermId": "term_2025_2028",
+    "acquiredYear": 2025,
+    "acquisitionType": "initial_draft",
+    "draftYear": 2025,
+    "startYear": 2025
+  },
+  {
+    "id": "p11",
+    "memberId": "m2",
+    "golferId": "g_keegan_bradley",
+    "leagueTermId": "term_2025_2028",
+    "acquiredYear": 2025,
+    "acquisitionType": "initial_draft",
+    "draftYear": 2025,
+    "startYear": 2025
+  },
+  {
+    "id": "p12",
+    "memberId": "m2",
+    "golferId": "g_aaron_rai",
+    "leagueTermId": "term_2025_2028",
+    "acquiredYear": 2025,
+    "acquisitionType": "initial_draft",
+    "draftYear": 2025,
+    "startYear": 2025
+  },
+  {
+    "id": "p13",
+    "memberId": "m3",
+    "golferId": "g_xander_schauffele",
+    "leagueTermId": "term_2025_2028",
+    "acquiredYear": 2025,
+    "acquisitionType": "initial_draft",
+    "draftYear": 2025,
+    "startYear": 2025
+  },
+  {
+    "id": "p14",
+    "memberId": "m3",
+    "golferId": "g_viktor_hovland",
+    "leagueTermId": "term_2025_2028",
+    "acquiredYear": 2025,
+    "acquisitionType": "initial_draft",
+    "draftYear": 2025,
+    "startYear": 2025
+  },
+  {
+    "id": "p15",
+    "memberId": "m3",
+    "golferId": "g_hideki_matsuyama",
+    "leagueTermId": "term_2025_2028",
+    "acquiredYear": 2025,
+    "acquisitionType": "initial_draft",
+    "draftYear": 2025,
+    "startYear": 2025
+  },
+  {
+    "id": "p16",
+    "memberId": "m3",
+    "golferId": "g_wyndham_clark",
+    "leagueTermId": "term_2025_2028",
+    "acquiredYear": 2025,
+    "acquisitionType": "initial_draft",
+    "draftYear": 2025,
+    "startYear": 2025
+  },
+  {
+    "id": "p17",
+    "memberId": "m3",
+    "golferId": "g_billy_horschel",
+    "leagueTermId": "term_2025_2028",
+    "acquiredYear": 2025,
+    "acquisitionType": "initial_draft",
+    "draftYear": 2025,
+    "startYear": 2025,
+    "endYear": 2025,
+    "droppedAfterYear": 2025,
+    "replacementDraftPickId": "rdp_2025_03"
+  },
+  {
+    "id": "p18",
+    "memberId": "m3",
+    "golferId": "g_corey_conners",
+    "leagueTermId": "term_2025_2028",
+    "acquiredYear": 2025,
+    "acquisitionType": "initial_draft",
+    "draftYear": 2025,
+    "startYear": 2025
+  },
+  {
+    "id": "p19",
+    "memberId": "m4",
+    "golferId": "g_ludvig_aberg",
+    "leagueTermId": "term_2025_2028",
+    "acquiredYear": 2025,
+    "acquisitionType": "initial_draft",
+    "draftYear": 2025,
+    "startYear": 2025
+  },
+  {
+    "id": "p20",
+    "memberId": "m4",
+    "golferId": "g_patrick_cantlay",
+    "leagueTermId": "term_2025_2028",
+    "acquiredYear": 2025,
+    "acquisitionType": "initial_draft",
+    "draftYear": 2025,
+    "startYear": 2025
+  },
+  {
+    "id": "p21",
+    "memberId": "m4",
+    "golferId": "g_sahith_theegala",
+    "leagueTermId": "term_2025_2028",
+    "acquiredYear": 2025,
+    "acquisitionType": "initial_draft",
+    "draftYear": 2025,
+    "startYear": 2025
+  },
+  {
+    "id": "p22",
+    "memberId": "m4",
+    "golferId": "g_min_woo_lee",
+    "leagueTermId": "term_2025_2028",
+    "acquiredYear": 2025,
+    "acquisitionType": "initial_draft",
+    "draftYear": 2025,
+    "startYear": 2025,
+    "endYear": 2025,
+    "droppedAfterYear": 2025,
+    "replacementDraftPickId": "rdp_2025_02"
+  },
+  {
+    "id": "p23",
+    "memberId": "m4",
+    "golferId": "g_maverick_mcnealy",
+    "leagueTermId": "term_2025_2028",
+    "acquiredYear": 2025,
+    "acquisitionType": "initial_draft",
+    "draftYear": 2025,
+    "startYear": 2025
+  },
+  {
+    "id": "p24",
+    "memberId": "m4",
+    "golferId": "g_matt_fitzpatrick",
+    "leagueTermId": "term_2025_2028",
+    "acquiredYear": 2025,
+    "acquisitionType": "initial_draft",
+    "draftYear": 2025,
+    "startYear": 2025
+  },
+  {
+    "id": "p25",
+    "memberId": "m5",
+    "golferId": "g_bryson_dechambeau",
+    "leagueTermId": "term_2025_2028",
+    "acquiredYear": 2025,
+    "acquisitionType": "initial_draft",
+    "draftYear": 2025,
+    "startYear": 2025
+  },
+  {
+    "id": "p26",
+    "memberId": "m5",
+    "golferId": "g_justin_thomas",
+    "leagueTermId": "term_2025_2028",
+    "acquiredYear": 2025,
+    "acquisitionType": "initial_draft",
+    "draftYear": 2025,
+    "startYear": 2025
+  },
+  {
+    "id": "p27",
+    "memberId": "m5",
+    "golferId": "g_robert_macintyre",
+    "leagueTermId": "term_2025_2028",
+    "acquiredYear": 2025,
+    "acquisitionType": "initial_draft",
+    "draftYear": 2025,
+    "startYear": 2025
+  },
+  {
+    "id": "p28",
+    "memberId": "m5",
+    "golferId": "g_nicolai_hojgaard",
+    "leagueTermId": "term_2025_2028",
+    "acquiredYear": 2025,
+    "acquisitionType": "initial_draft",
+    "draftYear": 2025,
+    "startYear": 2025,
+    "endYear": 2025,
+    "droppedAfterYear": 2025,
+    "replacementDraftPickId": "rdp_2025_04"
+  },
+  {
+    "id": "p29",
+    "memberId": "m5",
+    "golferId": "g_thomas_detry",
+    "leagueTermId": "term_2025_2028",
+    "acquiredYear": 2025,
+    "acquisitionType": "initial_draft",
+    "draftYear": 2025,
+    "startYear": 2025
+  },
+  {
+    "id": "p30",
+    "memberId": "m5",
+    "golferId": "g_tyrrell_hatton",
+    "leagueTermId": "term_2025_2028",
+    "acquiredYear": 2025,
+    "acquisitionType": "initial_draft",
+    "draftYear": 2025,
+    "startYear": 2025
+  },
+  {
+    "id": "p31",
+    "memberId": "m6",
+    "golferId": "g_jon_rahm",
+    "leagueTermId": "term_2025_2028",
+    "acquiredYear": 2025,
+    "acquisitionType": "initial_draft",
+    "draftYear": 2025,
+    "startYear": 2025
+  },
+  {
+    "id": "p32",
+    "memberId": "m6",
+    "golferId": "g_collin_morikawa",
+    "leagueTermId": "term_2025_2028",
+    "acquiredYear": 2025,
+    "acquisitionType": "initial_draft",
+    "draftYear": 2025,
+    "startYear": 2025
+  },
+  {
+    "id": "p33",
+    "memberId": "m6",
+    "golferId": "g_sungjae_im",
+    "leagueTermId": "term_2025_2028",
+    "acquiredYear": 2025,
+    "acquisitionType": "initial_draft",
+    "draftYear": 2025,
+    "startYear": 2025
+  },
+  {
+    "id": "p34",
+    "memberId": "m6",
+    "golferId": "g_brooks_koepka",
+    "leagueTermId": "term_2025_2028",
+    "acquiredYear": 2025,
+    "acquisitionType": "initial_draft",
+    "draftYear": 2025,
+    "startYear": 2025
+  },
+  {
+    "id": "p35",
+    "memberId": "m6",
+    "golferId": "g_cameron_smith",
+    "leagueTermId": "term_2025_2028",
+    "acquiredYear": 2025,
+    "acquisitionType": "initial_draft",
+    "draftYear": 2025,
+    "startYear": 2025
+  },
+  {
+    "id": "p36",
+    "memberId": "m6",
+    "golferId": "g_max_homa",
+    "leagueTermId": "term_2025_2028",
+    "acquiredYear": 2025,
+    "acquisitionType": "initial_draft",
+    "draftYear": 2025,
+    "startYear": 2025,
+    "endYear": 2025,
+    "droppedAfterYear": 2025,
+    "replacementDraftPickId": "rdp_2025_01"
+  },
+  {
+    "id": "p37",
+    "memberId": "m1",
+    "golferId": "g_cameron_young",
+    "leagueTermId": "term_2025_2028",
+    "acquiredYear": 2026,
+    "acquisitionType": "replacement_draft",
+    "startYear": 2026,
+    "replacementDraftPickId": "rdp_2025_06"
+  },
+  {
+    "id": "p38",
+    "memberId": "m3",
+    "golferId": "g_jj_spaun",
+    "leagueTermId": "term_2025_2028",
+    "acquiredYear": 2026,
+    "acquisitionType": "replacement_draft",
+    "startYear": 2026,
+    "replacementDraftPickId": "rdp_2025_03"
+  },
+  {
+    "id": "p39",
+    "memberId": "m4",
+    "golferId": "g_patrick_reed",
+    "leagueTermId": "term_2025_2028",
+    "acquiredYear": 2026,
+    "acquisitionType": "replacement_draft",
+    "startYear": 2026,
+    "replacementDraftPickId": "rdp_2025_02"
+  },
+  {
+    "id": "p40",
+    "memberId": "m5",
+    "golferId": "g_ben_griffin",
+    "leagueTermId": "term_2025_2028",
+    "acquiredYear": 2026,
+    "acquisitionType": "replacement_draft",
+    "startYear": 2026,
+    "replacementDraftPickId": "rdp_2025_04"
+  },
+  {
+    "id": "p41",
+    "memberId": "m6",
+    "golferId": "g_chris_gotterup",
+    "leagueTermId": "term_2025_2028",
+    "acquiredYear": 2026,
+    "acquisitionType": "replacement_draft",
+    "startYear": 2026,
+    "replacementDraftPickId": "rdp_2025_01"
+  }
+]

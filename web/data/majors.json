@@ -1,0 +1,172 @@
+[
+  {
+    "id": "major_2025_masters",
+    "year": 2025,
+    "name": "Masters",
+    "startDate": "2025-04-10",
+    "endDate": "2025-04-13",
+    "venue": "Augusta National Golf Club",
+    "location": "Augusta, Georgia",
+    "status": "payout_complete",
+    "winnerName": "Rory McIlroy",
+    "winnerGolferId": "g_rory_mcilroy"
+  },
+  {
+    "id": "major_2025_pga",
+    "year": 2025,
+    "name": "PGA Championship",
+    "startDate": "2025-05-15",
+    "endDate": "2025-05-18",
+    "venue": "Quail Hollow Club",
+    "location": "Charlotte, North Carolina",
+    "status": "payout_complete",
+    "winnerName": "Scottie Scheffler",
+    "winnerGolferId": "g_scottie_scheffler"
+  },
+  {
+    "id": "major_2025_us_open",
+    "year": 2025,
+    "name": "U.S. Open",
+    "startDate": "2025-06-12",
+    "endDate": "2025-06-15",
+    "venue": "Oakmont Country Club",
+    "location": "Oakmont, Pennsylvania",
+    "status": "winner_undrafted",
+    "winnerName": "J.J. Spaun",
+    "winnerGolferId": "g_jj_spaun"
+  },
+  {
+    "id": "major_2025_open",
+    "year": 2025,
+    "name": "The Open Championship",
+    "startDate": "2025-07-17",
+    "endDate": "2025-07-20",
+    "venue": "Royal Portrush",
+    "location": "Portrush, Northern Ireland",
+    "status": "payout_complete",
+    "winnerName": "Scottie Scheffler",
+    "winnerGolferId": "g_scottie_scheffler"
+  },
+  {
+    "id": "major_2026_masters",
+    "year": 2026,
+    "name": "Masters",
+    "startDate": "2026-04-09",
+    "endDate": "2026-04-12",
+    "venue": "Augusta National Golf Club",
+    "location": "Augusta, Georgia",
+    "status": "payout_complete",
+    "winnerName": "Rory McIlroy",
+    "winnerGolferId": "g_rory_mcilroy"
+  },
+  {
+    "id": "major_2026_pga",
+    "year": 2026,
+    "name": "PGA Championship",
+    "startDate": "2026-05-14",
+    "endDate": "2026-05-17",
+    "venue": "Aronimink Golf Club",
+    "location": "Newtown Square, Pennsylvania",
+    "status": "upcoming"
+  },
+  {
+    "id": "major_2026_us_open",
+    "year": 2026,
+    "name": "U.S. Open",
+    "startDate": "2026-06-18",
+    "endDate": "2026-06-21",
+    "venue": "Shinnecock Hills Golf Club",
+    "location": "Southampton, New York",
+    "status": "upcoming"
+  },
+  {
+    "id": "major_2026_open",
+    "year": 2026,
+    "name": "The Open Championship",
+    "startDate": "2026-07-16",
+    "endDate": "2026-07-19",
+    "venue": "Royal Birkdale Golf Club",
+    "location": "Southport, England",
+    "status": "upcoming"
+  },
+  {
+    "id": "major_2027_masters",
+    "year": 2027,
+    "name": "Masters",
+    "startDate": "2027-04-08",
+    "endDate": "2027-04-11",
+    "venue": "Augusta National Golf Club",
+    "location": "Augusta, Georgia",
+    "status": "upcoming"
+  },
+  {
+    "id": "major_2027_pga",
+    "year": 2027,
+    "name": "PGA Championship",
+    "startDate": "2027-05-20",
+    "endDate": "2027-05-23",
+    "venue": "PGA Frisco",
+    "location": "Frisco, Texas",
+    "status": "upcoming"
+  },
+  {
+    "id": "major_2027_us_open",
+    "year": 2027,
+    "name": "U.S. Open",
+    "startDate": "2027-06-17",
+    "endDate": "2027-06-20",
+    "venue": "Pebble Beach Golf Links",
+    "location": "Pebble Beach, California",
+    "status": "upcoming"
+  },
+  {
+    "id": "major_2027_open",
+    "year": 2027,
+    "name": "The Open Championship",
+    "startDate": "2027-07-15",
+    "endDate": "2027-07-18",
+    "venue": "The Old Course at St Andrews",
+    "location": "St Andrews, Scotland",
+    "status": "upcoming"
+  },
+  {
+    "id": "major_2028_masters",
+    "year": 2028,
+    "name": "Masters",
+    "startDate": "2028-04-06",
+    "endDate": "2028-04-09",
+    "venue": "Augusta National Golf Club",
+    "location": "Augusta, Georgia",
+    "status": "upcoming"
+  },
+  {
+    "id": "major_2028_pga",
+    "year": 2028,
+    "name": "PGA Championship",
+    "startDate": "2028-05-18",
+    "endDate": "2028-05-21",
+    "venue": "The Olympic Club, Lake Course",
+    "location": "San Francisco, California",
+    "status": "upcoming"
+  },
+  {
+    "id": "major_2028_us_open",
+    "year": 2028,
+    "name": "U.S. Open",
+    "startDate": "2028-06-15",
+    "endDate": "2028-06-18",
+    "venue": "Winged Foot Golf Club",
+    "location": "Mamaroneck, New York",
+    "status": "upcoming"
+  },
+  {
+    "id": "major_2028_open",
+    "year": 2028,
+    "name": "The Open Championship",
+    "startDate": "2028-08-03",
+    "endDate": "2028-08-06",
+    "venue": "Royal Lytham & St Annes",
+    "location": "Lytham St Annes, England",
+    "status": "upcoming"
+  }
+]

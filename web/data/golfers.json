@@ -1,0 +1,207 @@
+[
+  {
+    "id": "g_scottie_scheffler",
+    "name": "Scottie Scheffler",
+    "normalizedName": "scottie scheffler"
+  },
+  {
+    "id": "g_rory_mcilroy",
+    "name": "Rory McIlroy",
+    "normalizedName": "rory mcilroy"
+  },
+  {
+    "id": "g_xander_schauffele",
+    "name": "Xander Schauffele",
+    "normalizedName": "xander schauffele"
+  },
+  {
+    "id": "g_ludvig_aberg",
+    "name": "Ludvig Aberg",
+    "normalizedName": "ludvig aberg"
+  },
+  {
+    "id": "g_bryson_dechambeau",
+    "name": "Bryson DeChambeau",
+    "normalizedName": "bryson dechambeau"
+  },
+  {
+    "id": "g_jon_rahm",
+    "name": "Jon Rahm",
+    "normalizedName": "jon rahm"
+  },
+  {
+    "id": "g_shane_lowry",
+    "name": "Shane Lowry",
+    "normalizedName": "shane lowry"
+  },
+  {
+    "id": "g_russell_henley",
+    "name": "Russell Henley",
+    "normalizedName": "russell henley"
+  },
+  {
+    "id": "g_viktor_hovland",
+    "name": "Viktor Hovland",
+    "normalizedName": "viktor hovland"
+  },
+  {
+    "id": "g_patrick_cantlay",
+    "name": "Patrick Cantlay",
+    "normalizedName": "patrick cantlay"
+  },
+  {
+    "id": "g_justin_thomas",
+    "name": "Justin Thomas",
+    "normalizedName": "justin thomas"
+  },
+  {
+    "id": "g_collin_morikawa",
+    "name": "Collin Morikawa",
+    "normalizedName": "collin morikawa"
+  },
+  {
+    "id": "g_joaquin_niemann",
+    "name": "Joaquin Niemann",
+    "normalizedName": "joaquin niemann"
+  },
+  {
+    "id": "g_tommy_fleetwood",
+    "name": "Tommy Fleetwood",
+    "normalizedName": "tommy fleetwood"
+  },
+  {
+    "id": "g_hideki_matsuyama",
+    "name": "Hideki Matsuyama",
+    "normalizedName": "hideki matsuyama"
+  },
+  {
+    "id": "g_sahith_theegala",
+    "name": "Sahith Theegala",
+    "normalizedName": "sahith theegala"
+  },
+  {
+    "id": "g_robert_macintyre",
+    "name": "Robert MacIntyre",
+    "normalizedName": "robert macintyre"
+  },
+  {
+    "id": "g_sungjae_im",
+    "name": "Sungjae Im",
+    "normalizedName": "sungjae im"
+  },
+  {
+    "id": "g_akshay_bhatia",
+    "name": "Akshay Bhatia",
+    "normalizedName": "akshay bhatia"
+  },
+  {
+    "id": "g_sepp_straka",
+    "name": "Sepp Straka",
+    "normalizedName": "sepp straka"
+  },
+  {
+    "id": "g_wyndham_clark",
+    "name": "Wyndham Clark",
+    "normalizedName": "wyndham clark"
+  },
+  {
+    "id": "g_min_woo_lee",
+    "name": "Min Woo Lee",
+    "normalizedName": "min woo lee"
+  },
+  {
+    "id": "g_nicolai_hojgaard",
+    "name": "Nicolai Hojgaard",
+    "normalizedName": "nicolai hojgaard"
+  },
+  {
+    "id": "g_brooks_koepka",
+    "name": "Brooks Koepka",
+    "normalizedName": "brooks koepka"
+  },
+  {
+    "id": "g_jason_day",
+    "name": "Jason Day",
+    "normalizedName": "jason day"
+  },
+  {
+    "id": "g_keegan_bradley",
+    "name": "Keegan Bradley",
+    "normalizedName": "keegan bradley"
+  },
+  {
+    "id": "g_billy_horschel",
+    "name": "Billy Horschel",
+    "normalizedName": "billy horschel"
+  },
+  {
+    "id": "g_maverick_mcnealy",
+    "name": "Maverick McNealy",
+    "normalizedName": "maverick mcnealy"
+  },
+  {
+    "id": "g_thomas_detry",
+    "name": "Thomas Detry",
+    "normalizedName": "thomas detry"
+  },
+  {
+    "id": "g_cameron_smith",
+    "name": "Cameron Smith",
+    "normalizedName": "cameron smith"
+  },
+  {
+    "id": "g_nick_dunlap",
+    "name": "Nick Dunlap",
+    "normalizedName": "nick dunlap"
+  },
+  {
+    "id": "g_aaron_rai",
+    "name": "Aaron Rai",
+    "normalizedName": "aaron rai"
+  },
+  {
+    "id": "g_corey_conners",
+    "name": "Corey Conners",
+    "normalizedName": "corey conners"
+  },
+  {
+    "id": "g_matt_fitzpatrick",
+    "name": "Matt Fitzpatrick",
+    "normalizedName": "matt fitzpatrick"
+  },
+  {
+    "id": "g_tyrrell_hatton",
+    "name": "Tyrrell Hatton",
+    "normalizedName": "tyrrell hatton"
+  },
+  {
+    "id": "g_max_homa",
+    "name": "Max Homa",
+    "normalizedName": "max homa"
+  },
+  {
+    "id": "g_cameron_young",
+    "name": "Cameron Young",
+    "normalizedName": "cameron young"
+  },
+  {
+    "id": "g_patrick_reed",
+    "name": "Patrick Reed",
+    "normalizedName": "patrick reed"
+  },
+  {
+    "id": "g_ben_griffin",
+    "name": "Ben Griffin",
+    "normalizedName": "ben griffin"
+  },
+  {
+    "id": "g_jj_spaun",
+    "name": "J.J. Spaun",
+    "normalizedName": "jj spaun"
+  },
+  {
+    "id": "g_chris_gotterup",
+    "name": "Chris Gotterup",
+    "normalizedName": "chris gotterup"
+  }
+]

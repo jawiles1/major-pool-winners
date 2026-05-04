@@ -1,0 +1,57 @@
+[
+  {
+    "id": "rdp_2025_01",
+    "leagueTermId": "term_2025_2028",
+    "seasonYear": 2025,
+    "round": 1,
+    "draftOrder": 1,
+    "memberId": "m6",
+    "golferId": "g_chris_gotterup",
+    "source": "undrafted_pool",
+    "replacesGolferId": "g_max_homa"
+  },
+  {
+    "id": "rdp_2025_02",
+    "leagueTermId": "term_2025_2028",
+    "seasonYear": 2025,
+    "round": 1,
+    "draftOrder": 2,
+    "memberId": "m4",
+    "golferId": "g_patrick_reed",
+    "source": "undrafted_pool",
+    "replacesGolferId": "g_min_woo_lee"
+  },
+  {
+    "id": "rdp_2025_03",
+    "leagueTermId": "term_2025_2028",
+    "seasonYear": 2025,
+    "round": 1,
+    "draftOrder": 3,
+    "memberId": "m3",
+    "golferId": "g_jj_spaun",
+    "source": "undrafted_pool",
+    "replacesGolferId": "g_billy_horschel"
+  },
+  {
+    "id": "rdp_2025_04",
+    "leagueTermId": "term_2025_2028",
+    "seasonYear": 2025,
+    "round": 1,
+    "draftOrder": 4,
+    "memberId": "m5",
+    "golferId": "g_ben_griffin",
+    "source": "undrafted_pool",
+    "replacesGolferId": "g_nicolai_hojgaard"
+  },
+  {
+    "id": "rdp_2025_06",
+    "leagueTermId": "term_2025_2028",
+    "seasonYear": 2025,
+    "round": 1,
+    "draftOrder": 6,
+    "memberId": "m1",
+    "golferId": "g_cameron_young",
+    "source": "undrafted_pool",
+    "replacesGolferId": "g_shane_lowry"
+  }
+]

@@ -1,0 +1,49 @@
+[
+  {
+    "id": "drop_2025_m1",
+    "leagueTermId": "term_2025_2028",
+    "seasonYear": 2025,
+    "memberId": "m1",
+    "action": "drop",
+    "droppedGolferId": "g_shane_lowry"
+  },
+  {
+    "id": "drop_2025_m2",
+    "leagueTermId": "term_2025_2028",
+    "seasonYear": 2025,
+    "memberId": "m2",
+    "action": "keep"
+  },
+  {
+    "id": "drop_2025_m3",
+    "leagueTermId": "term_2025_2028",
+    "seasonYear": 2025,
+    "memberId": "m3",
+    "action": "drop",
+    "droppedGolferId": "g_billy_horschel"
+  },
+  {
+    "id": "drop_2025_m4",
+    "leagueTermId": "term_2025_2028",
+    "seasonYear": 2025,
+    "memberId": "m4",
+    "action": "drop",
+    "droppedGolferId": "g_min_woo_lee"
+  },
+  {
+    "id": "drop_2025_m5",
+    "leagueTermId": "term_2025_2028",
+    "seasonYear": 2025,
+    "memberId": "m5",
+    "action": "drop",
+    "droppedGolferId": "g_nicolai_hojgaard"
+  },
+  {
+    "id": "drop_2025_m6",
+    "leagueTermId": "term_2025_2028",
+    "seasonYear": 2025,
+    "memberId": "m6",
+    "action": "drop",
+    "droppedGolferId": "g_max_homa"
+  }
+]
