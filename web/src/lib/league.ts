@@ -105,7 +105,7 @@ export function buildPayoutDecision(
       : 0,
   };
 
-  const obligations: PaymentObligation = isDraftedWinner
+  const obligations: PaymentObligation[] = isDraftedWinner
     ? members
         .filter((member) => member.id !== winnerMatch.member?.id)
         .map((member) => ({
