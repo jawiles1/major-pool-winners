@@ -30,17 +30,6 @@ export function SiteNav() {
 
           <nav aria-label="Primary" className="flex flex-wrap gap-2">
             {navItems.map((item) => {
-              if (item.state === "soon") {
-                return (
-                  <span
-                    key={item.label}
-                    className="rounded-full border border-line bg-card/70 px-4 py-2 text-sm font-medium text-muted"
-                  >
-                    {item.label} soon
-                  </span>
-                );
-              }
-
               const isActive =
                 item.href === "/"
                   ? pathname === item.href
