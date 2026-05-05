@@ -1,7 +1,8 @@
 import Link from "next/link";
 
 import { golfers, leagueTerm, majors, members, rosters } from "@/lib/data";
-import { getResolvedMajors, getStandings } from "@/lib/league";
+import { pgaChampionship2026Field } from "@/lib/major-fields";
+import { getFieldAvailabilityForYear, getResolvedMajors, getStandings } from "@/lib/league";
 
 export default function Home() {
   const resolvedMajors = getResolvedMajors(majors).sort((left, right) =>
@@ -16,6 +17,14 @@ export default function Home() {
     members,
   );
   const leader = standings[0];
+  const pgaFieldAvailability = getFieldAvailabilityForYear(
+    rosters,
+    golfers,
+    2026,
+    [...pgaChampionship2026Field],
+  );
+  const missingPgaGolfersText =
+    pgaFieldAvailability.missingGolfers.map((golfer) => golfer.name).join(" and ");
 
   return (
     <main className="min-h-screen bg-[radial-gradient(circle_at_top,_rgba(255,250,240,0.95),_rgba(245,239,226,1)_45%,_rgba(228,218,193,0.95)_100%)]">
@@ -140,13 +149,19 @@ export default function Home() {
               className="rounded-[2rem] border border-line bg-card p-6"
             >
               <p className="text-sm font-semibold uppercase tracking-[0.2em] text-accent">
-                Coming next
+                PGA field watch
               </p>
-              <ul className="mt-5 space-y-4 text-sm leading-6 text-muted">
-                <li>The 2025 season page now carries the original draft and offseason story.</li>
-                <li>Next up is expanding from season history into standings and majors navigation.</li>
-                <li>Major-specific pages will later support automated event updates.</li>
-              </ul>
+              <p className="mt-5 text-base leading-7 text-foreground">
+                {pgaFieldAvailability.listedGolferCount} of {pgaFieldAvailability.activeGolferCount} active league golfers are listed for the upcoming PGA Championship.
+              </p>
+              <p className="mt-3 text-sm leading-6 text-muted">
+                {pgaFieldAvailability.missingGolfers.length > 0
+                  ? `${missingPgaGolfersText} ${pgaFieldAvailability.missingGolfers.length === 1 ? "is" : "are"} not in the current field list.`
+                  : "Every active league golfer is currently listed in the field."}
+              </p>
+              <p className="mt-3 text-sm leading-6 text-muted">
+                We can reuse this same check on future major pages once the field lists are available.
+              </p>
             </section>
           </aside>
         </section>

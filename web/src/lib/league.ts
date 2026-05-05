@@ -1,6 +1,7 @@
 import type {
   AnnualDropDecision,
   DraftBoardPick,
+  FieldAvailability,
   Golfer,
   LeagueTerm,
   Major,
@@ -19,6 +20,18 @@ export function normalizeGolferName(name: string): string {
     .replace(/[.'’,-]/g, " ")
     .replace(/\s+/g, " ")
     .trim();
+}
+
+function normalizeGolferNameForFieldCheck(name: string): string {
+  const normalizedName = normalizeGolferName(
+    name.normalize("NFD").replace(/[\u0300-\u036f]/g, ""),
+  );
+
+  const aliases = new Map<string, string>([
+    ["matthew fitzpatrick", "matt fitzpatrick"],
+  ]);
+
+  return aliases.get(normalizedName) ?? normalizedName;
 }
 
 export function findWinnerMatch(
@@ -155,6 +168,32 @@ export function getMemberRosterForYear(
     .map((rosterPick) => golfersById.get(rosterPick.golferId))
     .filter((golfer): golfer is Golfer => Boolean(golfer))
     .sort((left, right) => left.name.localeCompare(right.name));
+}
+
+export function getFieldAvailabilityForYear(
+  rosters: RosterPick[],
+  golfers: Golfer[],
+  year: number,
+  fieldGolferNames: string[],
+): FieldAvailability {
+  const activeGolfers = getActiveRostersForYear(rosters, year)
+    .map((rosterPick) => golfers.find((golfer) => golfer.id === rosterPick.golferId))
+    .filter((golfer): golfer is Golfer => Boolean(golfer));
+
+  const fieldNames = new Set(
+    fieldGolferNames.map((name) => normalizeGolferNameForFieldCheck(name)),
+  );
+
+  const missingGolfers = activeGolfers.filter(
+    (golfer) =>
+      !fieldNames.has(normalizeGolferNameForFieldCheck(golfer.name)),
+  );
+
+  return {
+    activeGolferCount: activeGolfers.length,
+    listedGolferCount: activeGolfers.length - missingGolfers.length,
+    missingGolfers: missingGolfers.sort((left, right) => left.name.localeCompare(right.name)),
+  };
 }
 
 export function getSeasonMajors(majors: Major[], year: number): Major[] {
