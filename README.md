@@ -52,6 +52,20 @@ For a simple Codex-built MVP:
 
 Start with static JSON/CSV data because it will be faster to validate the design. Add Google Sheets sync after the data model is stable.
 
+## Vercel Deployment
+
+The Next.js app lives in the `web/` directory. In Vercel, set the project
+**Root Directory** to `web` so Vercel installs dependencies from
+`web/package.json` and runs the Next build there.
+
+Recommended Vercel settings:
+
+- Framework Preset: Next.js
+- Root Directory: `web`
+- Install Command: default, or `npm ci`
+- Build Command: default, or `npm run build`
+- Output Directory: default
+
 ## Key Product Principle
 
 The website should be simple enough for league members to check during a major on their phone in under 10 seconds.
