@@ -17,18 +17,23 @@ import type {
 export function normalizeGolferName(name: string): string {
   return name
     .toLowerCase()
+    .replace(/ø/g, "o")
+    .replace(/æ/g, "ae")
     .replace(/[.'’,-]/g, " ")
     .replace(/\s+/g, " ")
     .trim();
 }
 
-function normalizeGolferNameForFieldCheck(name: string): string {
+export function normalizeGolferNameForFieldCheck(name: string): string {
   const normalizedName = normalizeGolferName(
     name.normalize("NFD").replace(/[\u0300-\u036f]/g, ""),
   );
 
   const aliases = new Map<string, string>([
     ["matthew fitzpatrick", "matt fitzpatrick"],
+    ["daniel brown", "dan brown"],
+    ["john keefer", "johnny keefer"],
+    ["michael katrude", "michael kartrude"],
   ]);
 
   return aliases.get(normalizedName) ?? normalizedName;

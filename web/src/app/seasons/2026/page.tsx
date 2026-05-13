@@ -197,11 +197,19 @@ export default function Season2026Page() {
                   {formatDateRange(major.startDate, major.endDate)}
                 </p>
                 {major.id === "major_2026_pga" ? (
-                  <p className="mt-3 text-sm leading-6 text-muted">
-                    {pgaFieldAvailability.missingGolfers.length > 0
-                      ? `League golfers not currently listed: ${missingPgaGolfersText}.`
-                      : "All active league golfers are currently listed in the field."}
-                  </p>
+                  <div className="mt-3 space-y-3">
+                    <p className="text-sm leading-6 text-muted">
+                      {pgaFieldAvailability.missingGolfers.length > 0
+                        ? `League golfers not currently listed: ${missingPgaGolfersText}.`
+                        : "All active league golfers are currently listed in the field."}
+                    </p>
+                    <Link
+                      href="/majors/2026-pga-championship"
+                      className="inline-flex rounded-full border border-line bg-white/70 px-4 py-2 text-sm font-semibold text-foreground transition hover:bg-card"
+                    >
+                      Open PGA dashboard
+                    </Link>
+                  </div>
                 ) : null}
               </article>
             ))}
