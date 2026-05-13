@@ -222,8 +222,16 @@ export default function MajorsPage() {
                 </p>
 
                 <div className="mt-4 rounded-[1.25rem] border border-dashed border-line bg-white/40 p-4 text-sm leading-6 text-muted">
-                  Daily leaderboard tracking and cut-status context will live on
-                  the dedicated page for this major.
+                  {major.id === "major_2026_pga" ? (
+                    <Link
+                      href="/majors/2026-pga-championship"
+                      className="font-semibold text-accent underline-offset-4 hover:underline"
+                    >
+                      Open the league-focused PGA Championship dashboard.
+                    </Link>
+                  ) : (
+                    "Daily leaderboard tracking and cut-status context will live on the dedicated page for this major."
+                  )}
                 </div>
               </article>
             ))}

@@ -1,8 +1,10 @@
 import Link from "next/link";
 
 import { golfers, leagueTerm, majors, members, rosters } from "@/lib/data";
+import { pgaChampionship2026Field } from "@/lib/major-fields";
 import {
   buildPayoutDecision,
+  getFieldAvailabilityForYear,
   getMemberRosterForYear,
   getResolvedMajors,
   getSeasonMajors,
@@ -49,6 +51,14 @@ export default function Season2026Page() {
     members,
   );
   const leader = standings[0];
+  const pgaFieldAvailability = getFieldAvailabilityForYear(
+    rosters,
+    golfers,
+    seasonYear,
+    [...pgaChampionship2026Field],
+  );
+  const missingPgaGolfersText =
+    pgaFieldAvailability.missingGolfers.map((golfer) => golfer.name).join(" and ");
 
   return (
     <main className="min-h-screen bg-[radial-gradient(circle_at_top,_rgba(255,250,240,0.97),_rgba(245,239,226,1)_42%,_rgba(226,214,184,0.98)_100%)]">
@@ -162,6 +172,19 @@ export default function Season2026Page() {
           <h2 className="mt-2 text-2xl font-semibold tracking-tight">
             Remaining 2026 majors
           </h2>
+          <div className="mt-6 rounded-[1.5rem] border border-line bg-background/70 p-5">
+            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-accent">
+              PGA Championship field check
+            </p>
+            <p className="mt-3 text-base leading-7 text-foreground">
+              {pgaFieldAvailability.listedGolferCount} of {pgaFieldAvailability.activeGolferCount} active league golfers are listed for the upcoming PGA Championship.
+            </p>
+            <p className="mt-2 text-sm leading-6 text-muted">
+              {pgaFieldAvailability.missingGolfers.length > 0
+                ? `${missingPgaGolfersText} ${pgaFieldAvailability.missingGolfers.length === 1 ? "is" : "are"} not in the current field list.`
+                : "Every active league golfer is currently listed in the field."}
+            </p>
+          </div>
           <div className="mt-6 grid gap-4 lg:grid-cols-3">
             {upcomingMajors.map((major) => (
               <article key={major.id} className="rounded-[1.5rem] border border-line bg-background/70 p-5">
@@ -173,6 +196,21 @@ export default function Season2026Page() {
                 <p className="mt-3 text-sm leading-6 text-muted">
                   {formatDateRange(major.startDate, major.endDate)}
                 </p>
+                {major.id === "major_2026_pga" ? (
+                  <div className="mt-3 space-y-3">
+                    <p className="text-sm leading-6 text-muted">
+                      {pgaFieldAvailability.missingGolfers.length > 0
+                        ? `League golfers not currently listed: ${missingPgaGolfersText}.`
+                        : "All active league golfers are currently listed in the field."}
+                    </p>
+                    <Link
+                      href="/majors/2026-pga-championship"
+                      className="inline-flex rounded-full border border-line bg-white/70 px-4 py-2 text-sm font-semibold text-foreground transition hover:bg-card"
+                    >
+                      Open PGA dashboard
+                    </Link>
+                  </div>
+                ) : null}
               </article>
             ))}
           </div>

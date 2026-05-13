@@ -9,11 +9,19 @@ const navItems = [
   { href: "/seasons", label: "Seasons", state: "live" },
   { href: "/teams", label: "Teams", state: "live" },
   { href: "/majors", label: "Majors", state: "live" },
+  { href: "/majors/2026-pga-championship", label: "2026 PGA", state: "live" },
   { href: "/ledger", label: "Ledger", state: "live" },
 ] as const;
 
 export function SiteNav() {
   const pathname = usePathname();
+  const activeHref = navItems
+    .filter((item) =>
+      item.href === "/"
+        ? pathname === item.href
+        : pathname === item.href || pathname.startsWith(`${item.href}/`),
+    )
+    .sort((left, right) => right.href.length - left.href.length)[0]?.href;
 
   return (
     <header className="sticky top-0 z-20 border-b border-line bg-background/88 backdrop-blur-md">
@@ -30,21 +38,7 @@ export function SiteNav() {
 
           <nav aria-label="Primary" className="flex flex-wrap gap-2">
             {navItems.map((item) => {
-              if (item.state === "soon") {
-                return (
-                  <span
-                    key={item.label}
-                    className="rounded-full border border-line bg-card/70 px-4 py-2 text-sm font-medium text-muted"
-                  >
-                    {item.label} soon
-                  </span>
-                );
-              }
-
-              const isActive =
-                item.href === "/"
-                  ? pathname === item.href
-                  : pathname.startsWith(item.href);
+              const isActive = item.href === activeHref;
 
               return (
                 <Link

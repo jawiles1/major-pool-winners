@@ -176,3 +176,9 @@ export type StandingsRow = {
   unpaidObligations: number;
   lastWinningMajorId?: string;
 };
+
+export type FieldAvailability = {
+  activeGolferCount: number;
+  listedGolferCount: number;
+  missingGolfers: Golfer[];
+};
