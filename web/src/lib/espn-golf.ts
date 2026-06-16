@@ -1,6 +1,14 @@
 export const ESPN_PGA_CHAMPIONSHIP_2026_EVENT_ID = "401811947";
+export const ESPN_US_OPEN_2026_EVENT_ID = "401811952";
+
+function buildEspnGolfLeaderboardUrl(eventId: string): string {
+  return `https://site.web.api.espn.com/apis/site/v2/sports/golf/leaderboard?league=pga&event=${eventId}`;
+}
+
 export const ESPN_PGA_CHAMPIONSHIP_2026_LEADERBOARD_URL =
-  `https://site.web.api.espn.com/apis/site/v2/sports/golf/leaderboard?league=pga&event=${ESPN_PGA_CHAMPIONSHIP_2026_EVENT_ID}`;
+  buildEspnGolfLeaderboardUrl(ESPN_PGA_CHAMPIONSHIP_2026_EVENT_ID);
+export const ESPN_US_OPEN_2026_LEADERBOARD_URL =
+  buildEspnGolfLeaderboardUrl(ESPN_US_OPEN_2026_EVENT_ID);
 
 type EspnRawStat = {
   name?: string;
@@ -160,6 +168,13 @@ export type EspnGolfLeaderboardPayload = {
   competitors: EspnGolfLeaderboardCompetitor[];
 };
 
+type EspnGolfLeaderboardMappingOptions = {
+  sourceUrl?: string;
+  fallbackEventId?: string;
+  fallbackEventName?: string;
+  fallbackCourseName?: string;
+};
+
 export function normalizeScoringName(name: string): string {
   return name
     .normalize("NFD")
@@ -174,8 +189,18 @@ export function normalizeScoringName(name: string): string {
 
 export function mapEspnGolfLeaderboard(
   rawLeaderboard: unknown,
-  sourceUrl = ESPN_PGA_CHAMPIONSHIP_2026_LEADERBOARD_URL,
+  options: string | EspnGolfLeaderboardMappingOptions = {},
 ): EspnGolfLeaderboardPayload {
+  const mappingOptions =
+    typeof options === "string" ? { sourceUrl: options } : options;
+  const sourceUrl =
+    mappingOptions.sourceUrl ?? ESPN_PGA_CHAMPIONSHIP_2026_LEADERBOARD_URL;
+  const fallbackEventId =
+    mappingOptions.fallbackEventId ?? ESPN_PGA_CHAMPIONSHIP_2026_EVENT_ID;
+  const fallbackEventName =
+    mappingOptions.fallbackEventName ?? "PGA Championship";
+  const fallbackCourseName =
+    mappingOptions.fallbackCourseName ?? "Unknown course";
   const leaderboard = rawLeaderboard as EspnRawLeaderboard;
   const event = leaderboard.events?.[0];
   const course = event?.courses?.[0];
@@ -186,12 +211,12 @@ export function mapEspnGolfLeaderboard(
     source: {
       provider: "ESPN",
       url: sourceUrl,
-      eventId: event?.id ?? ESPN_PGA_CHAMPIONSHIP_2026_EVENT_ID,
+      eventId: event?.id ?? fallbackEventId,
       note: "Unauthenticated ESPN leaderboard JSON. Useful for live scoring, but not a guaranteed long-term contract.",
     },
     event: {
-      id: event?.id ?? ESPN_PGA_CHAMPIONSHIP_2026_EVENT_ID,
-      name: event?.name ?? "PGA Championship",
+      id: event?.id ?? fallbackEventId,
+      name: event?.name ?? fallbackEventName,
       status: event?.status?.type?.description ?? "Unknown",
       statusState: event?.status?.type?.state ?? "unknown",
       completed: event?.status?.type?.completed ?? false,
@@ -200,7 +225,7 @@ export function mapEspnGolfLeaderboard(
     },
     course: course
       ? {
-          name: course.name ?? "Aronimink Golf Club",
+          name: course.name ?? fallbackCourseName,
           totalYards: course.totalYards ?? null,
           par: course.shotsToPar ?? null,
           location: [course.address?.city, course.address?.state]
@@ -236,7 +261,9 @@ function mapCompetitor(
     return null;
   }
 
-  const scoreToPar = getStatisticDisplay(competitor.statistics, "scoreToPar");
+  const scoreToPar = formatScoreDisplay(
+    getStatisticDisplay(competitor.statistics, "scoreToPar"),
+  );
   const status = competitor.status;
 
   return {
@@ -245,9 +272,9 @@ function mapCompetitor(
     shortName: competitor.athlete?.shortName ?? displayName,
     sortOrder: competitor.sortOrder ?? null,
     position: formatPosition(status?.position),
-    totalScore: competitor.score?.displayValue ?? scoreToPar ?? "-",
+    totalScore: formatScoreDisplay(competitor.score?.displayValue ?? scoreToPar),
     totalStrokes: competitor.score?.value ?? null,
-    today: status?.detail ?? status?.displayValue ?? "-",
+    today: formatScoreDetail(status?.detail ?? status?.displayValue),
     thru: status?.type?.shortDetail === "F"
       ? "F"
       : status?.displayThru ?? formatNumber(status?.thru),
@@ -256,7 +283,7 @@ function mapCompetitor(
     startHole: status?.startHole ?? null,
     status: status?.type?.description ?? "Unknown",
     statusState: status?.type?.state ?? "unknown",
-    scoreToPar: scoreToPar ?? competitor.score?.displayValue ?? "-",
+    scoreToPar: formatScoreDisplay(scoreToPar ?? competitor.score?.displayValue),
     headshotUrl: competitor.athlete?.headshot?.href ?? null,
     flagUrl: competitor.athlete?.flag?.href ?? null,
     flagAlt: competitor.athlete?.flag?.alt ?? null,
@@ -266,7 +293,7 @@ function mapCompetitor(
       .map((lineScore) => ({
         period: lineScore.period as number,
         strokes: lineScore.value ?? null,
-        scoreToPar: lineScore.displayValue ?? null,
+        scoreToPar: formatScoreDisplay(lineScore.displayValue, null),
         teeTime: lineScore.teeTime ?? null,
         positionAfterRound: formatNumber(lineScore.currentPosition),
         isPlayoff: lineScore.isPlayoff ?? false,
@@ -290,7 +317,36 @@ function formatPosition(position: EspnRawPosition | undefined): string {
     return "-";
   }
 
-  return position.isTie ? `T${position.displayName}` : position.displayName;
+  if (position.isTie && !position.displayName.startsWith("T")) {
+    return `T${position.displayName}`;
+  }
+
+  return position.displayName;
+}
+
+function formatScoreDetail(value: string | undefined): string {
+  return formatScoreDisplay(value, "-");
+}
+
+function formatScoreDisplay<TFallback extends string | null>(
+  value: string | null | undefined,
+  fallback: TFallback = "-" as TFallback,
+): string | TFallback {
+  if (!value) {
+    return fallback;
+  }
+
+  const trimmedValue = value.trim();
+
+  if (!trimmedValue) {
+    return fallback;
+  }
+
+  if (/^-+$/.test(trimmedValue)) {
+    return "-";
+  }
+
+  return trimmedValue.replace(/^-{2,}(?=\d|\()/, "-");
 }
 
 function formatWeather(weather: EspnRawWeather | undefined): string | null {

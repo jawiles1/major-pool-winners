@@ -95,7 +95,7 @@ export default function StandingsPage() {
                 </p>
                 <p className="mt-2 text-3xl font-semibold">{allResolvedMajors.length}</p>
                 <p className="mt-2 text-sm leading-6 text-amber-50/82">
-                  Includes the full 2025 season and the 2026 Masters.
+                  Includes the full 2025 season plus the 2026 Masters and PGA.
                 </p>
               </article>
             </div>

@@ -1,9 +1,7 @@
 import Link from "next/link";
 
 import { golfers, leagueTerm, majors, members, rosters } from "@/lib/data";
-import { buildPayoutDecision, getSeasonMajors } from "@/lib/league";
-
-const seasonYear = 2025;
+import { buildPayoutDecision, getResolvedMajors } from "@/lib/league";
 
 function formatCurrency(amount: number): string {
   return new Intl.NumberFormat("en-US", {
@@ -31,8 +29,14 @@ function formatDateRange(startDate: string, endDate: string): string {
 
 export default function LedgerPage() {
   const membersById = new Map(members.map((member) => [member.id, member]));
-  const seasonMajors = getSeasonMajors(majors, seasonYear);
-  const payoutDecisions = seasonMajors.map((major) =>
+  const resolvedMajors = getResolvedMajors(majors).sort((left, right) =>
+    left.endDate.localeCompare(right.endDate),
+  );
+  const latestResolvedMajor = resolvedMajors.at(-1);
+  const coveredThrough = latestResolvedMajor
+    ? `${latestResolvedMajor.year} ${latestResolvedMajor.name}`
+    : "resolved majors";
+  const payoutDecisions = resolvedMajors.map((major) =>
     buildPayoutDecision(major, leagueTerm, golfers, rosters, members),
   );
 
@@ -79,15 +83,15 @@ export default function LedgerPage() {
           <div className="grid gap-8 px-6 py-8 sm:px-8 lg:grid-cols-[1.35fr_0.85fr] lg:px-10 lg:py-10">
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-100/85">
-                League Ledger
+                Admin Ledger
               </p>
               <h1 className="mt-3 max-w-3xl text-4xl font-semibold tracking-tight sm:text-5xl">
-                The payout trail from the majors to every member.
+                Settlement view for every resolved major.
               </h1>
               <p className="mt-5 max-w-2xl text-sm leading-7 text-slate-50/88 sm:text-base">
-                This page shows each 2025 payout event, the obligations it
-                created, and the net result by owner. It is the first step
-                toward the full settlement tracking view.
+                This administrator-facing page shows payout events, obligations,
+                and net owner positions through the {coveredThrough}. It keeps
+                the general standings clean while preserving the full payment trail.
               </p>
 
               <div className="mt-7 flex flex-wrap gap-3">
@@ -109,21 +113,21 @@ export default function LedgerPage() {
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-1">
               <article className="rounded-[1.75rem] border border-white/12 bg-white/10 p-5 backdrop-blur-sm">
                 <p className="text-xs uppercase tracking-[0.18em] text-slate-100/80">
-                  2025 payout events
+                  Payout events
                 </p>
                 <p className="mt-2 text-3xl font-semibold">{payoutEvents.length}</p>
                 <p className="mt-2 text-sm leading-6 text-slate-50/82">
-                  Drafted winning majors that generated obligations.
+                  Drafted winning majors that generated obligations through {coveredThrough}.
                 </p>
               </article>
 
               <article className="rounded-[1.75rem] border border-white/12 bg-white/10 p-5 backdrop-blur-sm">
                 <p className="text-xs uppercase tracking-[0.18em] text-slate-100/80">
-                  Total obligations
+                  Resolved majors
                 </p>
-                <p className="mt-2 text-3xl font-semibold">{totalObligations}</p>
+                <p className="mt-2 text-3xl font-semibold">{resolvedMajors.length}</p>
                 <p className="mt-2 text-sm leading-6 text-slate-50/82">
-                  Five obligations are created each time a rostered golfer wins.
+                  Completed or settled events currently included in this admin view.
                 </p>
               </article>
             </div>
@@ -135,12 +139,12 @@ export default function LedgerPage() {
             {
               label: "Total payout value",
               value: formatCurrency(totalPayoutValue),
-              note: "Combined value of all 2025 drafted-winner events.",
+              note: "Combined value of all drafted-winner events through the latest resolved major.",
             },
             {
-              label: "Undrafted winners",
-              value: noPayoutEvents.length.toString(),
-              note: "Majors that did not create any payment obligations.",
+              label: "Total obligations",
+              value: totalObligations.toString(),
+              note: "Five obligations are created each time a rostered golfer wins.",
             },
             {
               label: "Per-loss amount",
@@ -166,7 +170,7 @@ export default function LedgerPage() {
                 Member summary
               </p>
               <h2 className="mt-2 text-2xl font-semibold tracking-tight">
-                Net position after the 2025 majors
+                Net position through the {coveredThrough}
               </h2>
             </div>
             <p className="text-sm text-muted">
@@ -203,18 +207,19 @@ export default function LedgerPage() {
                 Event ledger
               </p>
               <h2 className="mt-2 text-2xl font-semibold tracking-tight">
-                2025 payout events and obligations
+                Payout events and obligations
               </h2>
             </div>
             <p className="text-sm text-muted">
-              A full settlement tracker can layer paid and unpaid states on top of this.
+              {noPayoutEvents.length} resolved major
+              {noPayoutEvents.length === 1 ? "" : "s"} did not create an obligation.
             </p>
           </div>
 
           <div className="mt-6 grid gap-6">
             {payoutDecisions.map(({ payoutEvent, obligations, winnerMatch }) => {
-              const major = seasonMajors.find(
-                (seasonMajor) => seasonMajor.id === payoutEvent.majorId,
+              const major = resolvedMajors.find(
+                (resolvedMajor) => resolvedMajor.id === payoutEvent.majorId,
               );
               const winnerName =
                 winnerMatch.golfer?.name ?? major?.winnerName ?? "Unknown winner";
