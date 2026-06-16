@@ -67,7 +67,9 @@
     "endDate": "2026-05-17",
     "venue": "Aronimink Golf Club",
     "location": "Newtown Square, Pennsylvania",
-    "status": "upcoming"
+    "status": "payout_complete",
+    "winnerName": "Aaron Rai",
+    "winnerGolferId": "g_aaron_rai"
   },
   {
     "id": "major_2026_us_open",

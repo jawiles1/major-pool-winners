@@ -8,7 +8,7 @@ import type {
 } from "@/lib/espn-golf";
 import { normalizeScoringName } from "@/lib/espn-golf";
 
-export type LeaguePgaScoreboardRow = {
+export type LeagueMajorScoreboardRow = {
   golferId: string;
   memberId: string;
   golferName: string;
@@ -17,14 +17,28 @@ export type LeaguePgaScoreboardRow = {
   isInField: boolean;
 };
 
-type MajorWeekScoreboardProps = {
-  rows: LeaguePgaScoreboardRow[];
+type MajorScoreboardProps = {
+  rows: LeagueMajorScoreboardRow[];
+  leaderboardApiPath: string;
+  eyebrow: string;
+  title: string;
+  description: string;
+  scoreboardTimeZone?: string;
+  scoreboardTimeZoneLabel?: string;
 };
 
-const leaderboardApiPath = "/api/majors/2026-pga-championship/leaderboard";
 const roundNumbers = [1, 2, 3, 4] as const;
+const leagueTimeZone = "America/Chicago";
 
-export function MajorWeekScoreboard({ rows }: MajorWeekScoreboardProps) {
+export function MajorScoreboard({
+  rows,
+  leaderboardApiPath,
+  eyebrow,
+  title,
+  description,
+  scoreboardTimeZone = leagueTimeZone,
+  scoreboardTimeZoneLabel = "Central time",
+}: MajorScoreboardProps) {
   const [leaderboard, setLeaderboard] =
     useState<EspnGolfLeaderboardPayload | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -56,7 +70,7 @@ export function MajorWeekScoreboard({ rows }: MajorWeekScoreboardProps) {
     } finally {
       setIsRefreshing(false);
     }
-  }, []);
+  }, [leaderboardApiPath]);
 
   useEffect(() => {
     let isMounted = true;
@@ -121,14 +135,14 @@ export function MajorWeekScoreboard({ rows }: MajorWeekScoreboardProps) {
       <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
         <div>
           <p className="text-sm font-semibold uppercase tracking-[0.2em] text-accent">
-            League scoreboard
+            {eyebrow}
           </p>
-          <h2 className="mt-2 text-2xl font-semibold tracking-tight">
-            Drafted golfers by day
-          </h2>
+          <h2 className="mt-2 text-2xl font-semibold tracking-tight">{title}</h2>
           <p className="mt-3 max-w-3xl text-sm leading-6 text-muted">
-            The table is limited to active league golfers. It refreshes from the
-            ESPN leaderboard feed every minute while this page is open.
+            {description}
+          </p>
+          <p className="mt-2 text-xs font-semibold uppercase tracking-[0.14em] text-muted">
+            Tee times shown in {scoreboardTimeZoneLabel}
           </p>
         </div>
 
@@ -162,7 +176,7 @@ export function MajorWeekScoreboard({ rows }: MajorWeekScoreboardProps) {
             {scoredLeagueGolfers} of {rows.length}
           </p>
           <p className="mt-1 text-sm text-muted">
-            Live scoring rows currently matched by golfer name.
+            Scoring rows currently matched by golfer name.
           </p>
         </article>
 
@@ -176,7 +190,7 @@ export function MajorWeekScoreboard({ rows }: MajorWeekScoreboardProps) {
           <p className="mt-1 text-sm text-muted">
             {leagueLeader?.live
               ? `${leagueLeader.live.position} for ${leagueLeader.teamName}`
-              : "Tee times are loaded before round scores post."}
+              : "Tee times load before round scores post."}
           </p>
         </article>
       </div>
@@ -236,9 +250,11 @@ export function MajorWeekScoreboard({ rows }: MajorWeekScoreboardProps) {
                   </p>
                 </td>
                 <td className="px-4 py-4 font-semibold text-foreground">
-                  {row.live?.totalScore ?? "-"}
+                  {formatScoreValue(row.live?.totalScore)}
                 </td>
-                <td className="px-4 py-4 text-muted">{row.live?.today ?? "-"}</td>
+                <td className="px-4 py-4 text-muted">
+                  {formatScoreValue(row.live?.today)}
+                </td>
                 <td className="px-4 py-4 text-muted">{row.live?.thru ?? "-"}</td>
                 {roundNumbers.map((roundNumber) => (
                   <td key={roundNumber} className="px-4 py-4 text-muted">
@@ -246,6 +262,7 @@ export function MajorWeekScoreboard({ rows }: MajorWeekScoreboardProps) {
                       row.live?.roundScores.find(
                         (roundScore) => roundScore.period === roundNumber,
                       ) ?? null,
+                      scoreboardTimeZone,
                     )}
                   </td>
                 ))}
@@ -289,29 +306,46 @@ export function MajorWeekScoreboard({ rows }: MajorWeekScoreboardProps) {
   );
 }
 
-function formatRoundScore(roundScore: EspnGolfRoundScore | null): string {
+function formatRoundScore(
+  roundScore: EspnGolfRoundScore | null,
+  timeZone: string,
+): string {
   if (!roundScore) {
     return "TBD";
   }
 
   if (roundScore.strokes !== null) {
     return roundScore.scoreToPar
-      ? `${roundScore.strokes} (${roundScore.scoreToPar})`
+      ? `${roundScore.strokes} (${formatScoreValue(roundScore.scoreToPar)})`
       : roundScore.strokes.toString();
   }
 
   if (roundScore.teeTime) {
-    return formatTeeTime(roundScore.teeTime);
+    return formatTeeTime(roundScore.teeTime, timeZone);
   }
 
   return "Pending";
 }
 
-function formatTeeTime(teeTime: string): string {
+function formatScoreValue(value: string | null | undefined): string {
+  if (!value) {
+    return "-";
+  }
+
+  const trimmedValue = value.trim();
+
+  if (!trimmedValue || /^-+$/.test(trimmedValue)) {
+    return "-";
+  }
+
+  return trimmedValue.replace(/^-{2,}(?=\d|\()/, "-");
+}
+
+function formatTeeTime(teeTime: string, timeZone: string): string {
   return new Intl.DateTimeFormat("en-US", {
     hour: "numeric",
     minute: "2-digit",
-    timeZone: "America/New_York",
+    timeZone,
     timeZoneName: "short",
   }).format(new Date(teeTime));
 }

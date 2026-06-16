@@ -5,34 +5,26 @@ import {
   MajorScoreboard,
   type LeagueMajorScoreboardRow,
 } from "@/components/major-scoreboard";
-import { golfers, leagueTerm, majors, members, rosters } from "@/lib/data";
+import { golfers, majors, members, rosters } from "@/lib/data";
 import {
-  ESPN_PGA_CHAMPIONSHIP_2026_EVENT_ID,
+  ESPN_US_OPEN_2026_EVENT_ID,
 } from "@/lib/espn-golf";
-import { pgaChampionship2026Field } from "@/lib/major-fields";
+import { usOpen2026Field } from "@/lib/major-fields";
 import {
-  buildPayoutDecision,
   getActiveRostersForYear,
   normalizeGolferNameForFieldCheck,
 } from "@/lib/league";
 
 export const metadata: Metadata = {
-  title: "2026 PGA Championship | Major Pool Winners",
+  title: "2026 U.S. Open | Major Pool Winners",
   description:
-    "League-focused 2026 PGA Championship result, payout summary, and scoring archive.",
+    "League-focused 2026 U.S. Open dashboard with field availability, tee times, and scoring.",
 };
 
 const seasonYear = 2026;
-const pgaMajorId = "major_2026_pga";
-const eventWeekStartDate = "2026-05-11";
-const leaderboardApiPath = "/api/majors/2026-pga-championship/leaderboard";
-const pgaResult = {
-  winner: "Aaron Rai",
-  score: "9-under 271",
-  margin: "3 strokes",
-  runnerUp: "Jon Rahm and Alex Smalley",
-  finalRound: "65",
-};
+const usOpenMajorId = "major_2026_us_open";
+const eventWeekStartDate = "2026-06-15";
+const leaderboardApiPath = "/api/majors/2026-us-open/leaderboard";
 
 function formatDateRange(startDate: string, endDate: string): string {
   const start = new Date(`${startDate}T12:00:00`);
@@ -52,16 +44,11 @@ function formatDateRange(startDate: string, endDate: string): string {
   );
 }
 
-export default function PgaChampionship2026Page() {
-  const pgaMajor = majors.find((major) => major.id === pgaMajorId);
-  const payoutDecision = pgaMajor
-    ? buildPayoutDecision(pgaMajor, leagueTerm, golfers, rosters, members)
-    : null;
-  const leagueRows = getLeaguePgaRows();
+export default function UsOpen2026Page() {
+  const usOpenMajor = majors.find((major) => major.id === usOpenMajorId);
+  const leagueRows = getLeagueUsOpenRows();
   const draftedInFieldRows = leagueRows.filter((row) => row.isInField);
   const missingRows = leagueRows.filter((row) => !row.isInField);
-  const winningMember = payoutDecision?.winnerMatch.member;
-  const payoutEvent = payoutDecision?.payoutEvent;
   const teams = members.map((member) => {
     const teamRows = leagueRows
       .filter((row) => row.memberId === member.id)
@@ -74,30 +61,30 @@ export default function PgaChampionship2026Page() {
     };
   });
 
-  const championshipDates = pgaMajor
-    ? formatDateRange(pgaMajor.startDate, pgaMajor.endDate)
-    : "May 14 - May 17, 2026";
-  const eventWeekDates = pgaMajor
-    ? formatDateRange(eventWeekStartDate, pgaMajor.endDate)
-    : "May 11 - May 17, 2026";
+  const championshipDates = usOpenMajor
+    ? formatDateRange(usOpenMajor.startDate, usOpenMajor.endDate)
+    : "Jun 18 - Jun 21, 2026";
+  const eventWeekDates = usOpenMajor
+    ? formatDateRange(eventWeekStartDate, usOpenMajor.endDate)
+    : "Jun 15 - Jun 21, 2026";
 
   return (
-    <main className="min-h-screen bg-[radial-gradient(circle_at_top,_rgba(255,250,240,0.96),_rgba(245,239,226,1)_44%,_rgba(223,233,229,0.98)_100%)]">
+    <main className="min-h-screen bg-[radial-gradient(circle_at_top,_rgba(239,248,244,0.98),_rgba(245,239,226,1)_46%,_rgba(222,233,229,0.98)_100%)]">
       <div className="mx-auto flex w-full max-w-7xl flex-col gap-7 px-5 py-6 sm:px-8 lg:px-10">
-        <header className="overflow-hidden rounded-[2rem] border border-line bg-[linear-gradient(135deg,_rgba(18,52,45,0.98),_rgba(36,96,103,0.94)_52%,_rgba(187,157,83,0.86)_100%)] text-white shadow-[0_30px_90px_rgba(18,52,45,0.18)]">
+        <header className="overflow-hidden rounded-[2rem] border border-line bg-[linear-gradient(135deg,_rgba(24,58,49,0.98),_rgba(48,104,113,0.94)_52%,_rgba(210,189,117,0.86)_100%)] text-white shadow-[0_30px_90px_rgba(18,52,45,0.18)]">
           <div className="grid gap-7 px-6 py-7 lg:grid-cols-[1.2fr_0.8fr] lg:px-9 lg:py-9">
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.28em] text-emerald-100/85">
-                Final major result
+                Major week command center
               </p>
               <h1 className="mt-3 text-4xl font-semibold tracking-tight sm:text-5xl">
-                2026 PGA Championship
+                2026 U.S. Open
               </h1>
               <p className="mt-4 max-w-3xl text-sm leading-7 text-emerald-50/90 sm:text-base">
-                Aaron Rai closed with a {pgaResult.finalRound} at Aronimink to
-                win the Wanamaker Trophy at {pgaResult.score}, {pgaResult.margin} clear of{" "}
-                {pgaResult.runnerUp}. The league result is settled here with
-                field context, payout impact, and the final ESPN scoring archive.
+                Shinnecock Hills hosts the 126th U.S. Open from{" "}
+                {championshipDates}. The current field is loaded with Round 1
+                tee times shown in Central time, league field status, and scoring
+                rows ready for the tournament window.
               </p>
 
               <div className="mt-6 flex flex-wrap gap-3">
@@ -114,40 +101,38 @@ export default function PgaChampionship2026Page() {
                   Majors hub
                 </Link>
                 <a
-                  href="https://www.espn.com/golf/leaderboard?tournamentId=401811947"
+                  href="https://www.espn.com/golf/leaderboard?tournamentId=401811952"
                   className="rounded-full border border-white/20 bg-white/10 px-5 py-3 text-sm font-semibold text-white transition hover:bg-white/16"
                 >
                   ESPN leaderboard
+                </a>
+                <a
+                  href="https://www.usopen.com/2026/players.html"
+                  className="rounded-full border border-white/20 bg-white/10 px-5 py-3 text-sm font-semibold text-white transition hover:bg-white/16"
+                >
+                  USGA players
                 </a>
               </div>
             </div>
 
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-1">
               <HeroMetric
-                label="Champion"
-                value={pgaResult.winner}
-                note={`${pgaResult.score} at ${pgaMajor?.venue ?? "Aronimink Golf Club"}`}
+                label="Venue"
+                value={usOpenMajor?.venue ?? "Shinnecock Hills Golf Club"}
+                note={usOpenMajor?.location ?? "Southampton, New York"}
               />
               <HeroMetric
-                label="League winner"
-                value={winningMember?.displayName ?? "Rostered winner"}
-                note={
-                  winningMember
-                    ? `${winningMember.teamName} held Rai for the PGA payout.`
-                    : "Winner ownership is unresolved."
-                }
+                label="Event week"
+                value={eventWeekDates}
+                note={`Championship scoring: ${championshipDates}`}
               />
               <HeroMetric
-                label="Payout"
-                value={
-                  payoutEvent
-                    ? `$${payoutEvent.totalPayout.toLocaleString()}`
-                    : "Pending"
-                }
+                label="League field"
+                value={`${draftedInFieldRows.length} of ${leagueRows.length}`}
                 note={
-                  payoutEvent
-                    ? `$${payoutEvent.amountPerLosingMember} per losing member, marked complete.`
-                    : "No payout event is available."
+                  missingRows.length > 0
+                    ? `${missingRows.map((row) => row.golferName).join(", ")} missing from the field list.`
+                    : "Every active league golfer is in the field."
                 }
               />
             </div>
@@ -157,73 +142,32 @@ export default function PgaChampionship2026Page() {
         <section className="grid gap-4 md:grid-cols-4">
           <DashboardStat
             label="Field size"
-            value={pgaChampionship2026Field.length.toString()}
-            note="Stored PGA Championship field used for league matching."
+            value={usOpen2026Field.length.toString()}
+            note="Current ESPN field stored for league matching."
           />
           <DashboardStat
             label="Drafted in field"
             value={draftedInFieldRows.length.toString()}
-            note="Active league golfers matched into the PGA field."
+            note="Active league golfers matched into the U.S. Open field."
           />
           <DashboardStat
-            label="Runner-up score"
-            value="-6"
-            note="Jon Rahm and Alex Smalley finished three shots back."
+            label="Active missing"
+            value={missingRows.length.toString()}
+            note="League-owned golfers not in the current field list."
           />
           <DashboardStat
             label="ESPN event"
-            value={ESPN_PGA_CHAMPIONSHIP_2026_EVENT_ID}
-            note="Public scoring feed used by the final table."
+            value={ESPN_US_OPEN_2026_EVENT_ID}
+            note="Public scoring feed for tee times and live scoring."
           />
-        </section>
-
-        <section className="grid gap-4 lg:grid-cols-3">
-          <article className="rounded-[1.5rem] border border-line bg-card/92 p-5">
-            <p className="text-sm font-semibold uppercase tracking-[0.2em] text-accent">
-              Result
-            </p>
-            <h2 className="mt-2 text-2xl font-semibold tracking-tight">
-              Rai breaks through
-            </h2>
-            <p className="mt-3 text-sm leading-6 text-muted">
-              The final leaderboard has Rai first, Rahm and Smalley tied second,
-              and Justin Thomas, Matti Schmid, and Ludvig Aberg tied fourth.
-            </p>
-          </article>
-
-          <article className="rounded-[1.5rem] border border-line bg-card/92 p-5">
-            <p className="text-sm font-semibold uppercase tracking-[0.2em] text-accent">
-              League impact
-            </p>
-            <h2 className="mt-2 text-2xl font-semibold tracking-tight">
-              Team Buckingham cashes
-            </h2>
-            <p className="mt-3 text-sm leading-6 text-muted">
-              Ed Buckingham rostered Aaron Rai, so the PGA joins the 2026
-              Masters as a drafted-winner payout for Team Buckingham.
-            </p>
-          </article>
-
-          <article className="rounded-[1.5rem] border border-line bg-card/92 p-5">
-            <p className="text-sm font-semibold uppercase tracking-[0.2em] text-accent">
-              Event window
-            </p>
-            <h2 className="mt-2 text-2xl font-semibold tracking-tight">
-              {championshipDates}
-            </h2>
-            <p className="mt-3 text-sm leading-6 text-muted">
-              Event-week tracking ran {eventWeekDates}, with final scoring now
-              preserved from the ESPN feed.
-            </p>
-          </article>
         </section>
 
         <MajorScoreboard
           rows={leagueRows}
           leaderboardApiPath={leaderboardApiPath}
-          eyebrow="Final scoreboard"
-          title="Drafted golfers by finish"
-          description="The table is limited to active league golfers and now acts as the scoring archive for the completed PGA Championship."
+          eyebrow="League scoreboard"
+          title="Drafted golfers at Shinnecock"
+          description="The table is limited to active league golfers. Round 1 and Round 2 tee times are available now in Central time, with score columns filling in when play begins."
         />
 
         <section className="grid gap-5 lg:grid-cols-[1.35fr_0.65fr]">
@@ -321,17 +265,18 @@ export default function PgaChampionship2026Page() {
 
             <section className="rounded-[2rem] border border-line bg-[#173c27] p-5 text-white sm:p-7">
               <p className="text-sm font-semibold uppercase tracking-[0.2em] text-emerald-100/85">
-                Scoring archive
+                Shinnecock setup
               </p>
               <h2 className="mt-2 text-2xl font-semibold tracking-tight">
-                Final leaderboard
+                Par 70, 7,440 yards
               </h2>
               <p className="mt-4 text-sm leading-6 text-emerald-50/86">
-                Use ESPN for the full tournament board, player scorecards, and
-                finishing positions beyond the league-owned golfers shown here.
+                The championship returns to Southampton for the sixth U.S. Open
+                at Shinnecock Hills. J.J. Spaun enters as defending champion
+                after the 2025 Oakmont win.
               </p>
               <a
-                href="https://www.espn.com/golf/leaderboard?tournamentId=401811947"
+                href="https://www.espn.com/golf/leaderboard?tournamentId=401811952"
                 className="mt-5 inline-flex rounded-full border border-white/20 bg-white/10 px-5 py-3 text-sm font-semibold text-white transition hover:bg-white/16"
               >
                 View ESPN leaderboard
@@ -382,7 +327,7 @@ function DashboardStat({
   );
 }
 
-function getLeaguePgaRows(): LeagueMajorScoreboardRow[] {
+function getLeagueUsOpenRows(): LeagueMajorScoreboardRow[] {
   const activeRosterPicks = getActiveRostersForYear(rosters, seasonYear);
   const golfersById = new Map(golfers.map((golfer) => [golfer.id, golfer]));
   const membersById = new Map(members.map((member) => [member.id, member]));
@@ -390,7 +335,7 @@ function getLeaguePgaRows(): LeagueMajorScoreboardRow[] {
     members.map((member, index) => [member.id, member.initialDraftOrder ?? index]),
   );
   const fieldNames = new Set(
-    pgaChampionship2026Field.map((fieldGolfer) =>
+    usOpen2026Field.map((fieldGolfer) =>
       normalizeGolferNameForFieldCheck(fieldGolfer),
     ),
   );

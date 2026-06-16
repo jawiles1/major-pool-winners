@@ -50,10 +50,10 @@ export default function MajorsPage() {
                 The four events that drive every season.
               </h1>
               <p className="mt-5 max-w-2xl text-sm leading-7 text-lime-50/88 sm:text-base">
-                This page tracks the completed majors from 2025 and the upcoming
-                schedule for 2026. It is the launch point for the dedicated
-                major pages that will later support daily score updates and final
-                payout summaries.
+                This page tracks the completed majors from 2025 and the current
+                2026 season state. It is the launch point for the dedicated
+                major pages that support scoring, field context, and final payout
+                summaries.
               </p>
 
               <div className="mt-7 flex flex-wrap gap-3">
@@ -111,7 +111,7 @@ export default function MajorsPage() {
             {
               label: "Next wave",
               value: majors2026.length.toString(),
-              note: "2026 schedule is loaded and ready for dedicated event pages.",
+              note: "2026 results and remaining major pages are loaded.",
             },
           ].map((item) => (
             <article
@@ -187,14 +187,14 @@ export default function MajorsPage() {
           <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
             <div>
               <p className="text-sm font-semibold uppercase tracking-[0.2em] text-accent">
-                Upcoming season
+                Current season
               </p>
               <h2 className="mt-2 text-2xl font-semibold tracking-tight">
-                2026 majors schedule
+                2026 majors results and schedule
               </h2>
             </div>
             <p className="text-sm text-muted">
-              These will become the first dedicated event pages.
+              PGA is settled, U.S. Open is ready for tournament week.
             </p>
           </div>
 
@@ -220,6 +220,11 @@ export default function MajorsPage() {
                 <p className="mt-4 text-sm leading-6 text-muted">
                   {formatDateRange(major.startDate, major.endDate)}
                 </p>
+                {major.winnerName ? (
+                  <p className="mt-2 text-sm leading-6 text-muted">
+                    Winner: {major.winnerName}
+                  </p>
+                ) : null}
 
                 <div className="mt-4 rounded-[1.25rem] border border-dashed border-line bg-white/40 p-4 text-sm leading-6 text-muted">
                   {major.id === "major_2026_pga" ? (
@@ -227,7 +232,14 @@ export default function MajorsPage() {
                       href="/majors/2026-pga-championship"
                       className="font-semibold text-accent underline-offset-4 hover:underline"
                     >
-                      Open the league-focused PGA Championship dashboard.
+                      Open the final PGA Championship result page.
+                    </Link>
+                  ) : major.id === "major_2026_us_open" ? (
+                    <Link
+                      href="/majors/2026-us-open"
+                      className="font-semibold text-accent underline-offset-4 hover:underline"
+                    >
+                      Open the U.S. Open command center.
                     </Link>
                   ) : (
                     "Daily leaderboard tracking and cut-status context will live on the dedicated page for this major."
