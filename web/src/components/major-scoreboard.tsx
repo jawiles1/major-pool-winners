@@ -253,7 +253,7 @@ export function MajorScoreboard({
                   {formatScoreValue(row.live?.totalScore)}
                 </td>
                 <td className="px-4 py-4 text-muted">
-                  {formatScoreValue(row.live?.today)}
+                  {formatTodayValue(row.live, scoreboardTimeZone)}
                 </td>
                 <td className="px-4 py-4 text-muted">{row.live?.thru ?? "-"}</td>
                 {roundNumbers.map((roundNumber) => (
@@ -339,6 +339,34 @@ function formatScoreValue(value: string | null | undefined): string {
   }
 
   return trimmedValue.replace(/^-{2,}(?=\d|\()/, "-");
+}
+
+function formatTodayValue(
+  live:
+    | {
+        status: string;
+        statusState: string;
+        teeTime: string | null;
+        today: string;
+      }
+    | null
+    | undefined,
+  timeZone: string,
+): string {
+  if (!live) {
+    return "-";
+  }
+
+  if (
+    live.teeTime &&
+    (live.statusState === "pre" ||
+      live.status === "Scheduled" ||
+      /\bE[DS]T\b/.test(live.today))
+  ) {
+    return formatTeeTime(live.teeTime, timeZone);
+  }
+
+  return formatScoreValue(live.today);
 }
 
 function formatTeeTime(teeTime: string, timeZone: string): string {
