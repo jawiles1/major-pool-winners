@@ -6,9 +6,6 @@ import {
   type LeagueMajorScoreboardRow,
 } from "@/components/major-scoreboard";
 import { golfers, leagueTerm, majors, members, rosters } from "@/lib/data";
-import {
-  ESPN_US_OPEN_2026_EVENT_ID,
-} from "@/lib/espn-golf";
 import { usOpen2026Field } from "@/lib/major-fields";
 import {
   buildPayoutDecision,
@@ -171,9 +168,9 @@ export default function UsOpen2026Page() {
             note={`${championshipDates}; Sam Burns finished one shot back.`}
           />
           <DashboardStat
-            label="ESPN event"
-            value={ESPN_US_OPEN_2026_EVENT_ID}
-            note="Public scoring feed for tee times and live scoring."
+            label="Payment status"
+            value="Paid"
+            note="All five losing-member obligations are marked complete."
           />
         </section>
 

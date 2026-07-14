@@ -6,7 +6,6 @@ import {
   type LeagueMajorScoreboardRow,
 } from "@/components/major-scoreboard";
 import { golfers, majors, members, rosters } from "@/lib/data";
-import { ESPN_OPEN_CHAMPIONSHIP_2026_EVENT_ID } from "@/lib/espn-golf";
 import { openChampionship2026Field } from "@/lib/major-fields";
 import {
   getActiveRostersForYear,
@@ -154,9 +153,9 @@ export default function OpenChampionship2026Page() {
             note="League-owned golfers not in the current field list."
           />
           <DashboardStat
-            label="ESPN event"
-            value={ESPN_OPEN_CHAMPIONSHIP_2026_EVENT_ID}
-            note="Public scoring feed for tee times and live scoring."
+            label="Where to watch"
+            value="NBC / USA / Peacock"
+            note="Broadcast coverage listed for the Open Championship window."
           />
         </section>
 
