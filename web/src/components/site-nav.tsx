@@ -11,6 +11,7 @@ const navItems = [
   { href: "/majors", label: "Majors", state: "live" },
   { href: "/majors/2026-pga-championship", label: "2026 PGA", state: "live" },
   { href: "/majors/2026-us-open", label: "2026 U.S. Open", state: "live" },
+  { href: "/majors/2026-open-championship", label: "2026 Open", state: "live" },
   { href: "/ledger", label: "Ledger", state: "live" },
 ] as const;
 

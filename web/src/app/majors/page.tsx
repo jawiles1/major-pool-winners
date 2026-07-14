@@ -194,7 +194,7 @@ export default function MajorsPage() {
               </h2>
             </div>
             <p className="text-sm text-muted">
-              PGA is settled, U.S. Open is ready for tournament week.
+              Masters, PGA, and U.S. Open are settled. The Open is ready for tournament week.
             </p>
           </div>
 
@@ -239,7 +239,14 @@ export default function MajorsPage() {
                       href="/majors/2026-us-open"
                       className="font-semibold text-accent underline-offset-4 hover:underline"
                     >
-                      Open the U.S. Open command center.
+                      Open the final U.S. Open result page.
+                    </Link>
+                  ) : major.id === "major_2026_open" ? (
+                    <Link
+                      href="/majors/2026-open-championship"
+                      className="font-semibold text-accent underline-offset-4 hover:underline"
+                    >
+                      Open the Open Championship command center.
                     </Link>
                   ) : (
                     "Daily leaderboard tracking and cut-status context will live on the dedicated page for this major."

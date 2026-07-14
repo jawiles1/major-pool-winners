@@ -79,7 +79,9 @@
     "endDate": "2026-06-21",
     "venue": "Shinnecock Hills Golf Club",
     "location": "Southampton, New York",
-    "status": "upcoming"
+    "status": "payout_complete",
+    "winnerName": "Wyndham Clark",
+    "winnerGolferId": "g_wyndham_clark"
   },
   {
     "id": "major_2026_open",
