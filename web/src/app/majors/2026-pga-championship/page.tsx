@@ -6,9 +6,6 @@ import {
   type LeagueMajorScoreboardRow,
 } from "@/components/major-scoreboard";
 import { golfers, leagueTerm, majors, members, rosters } from "@/lib/data";
-import {
-  ESPN_PGA_CHAMPIONSHIP_2026_EVENT_ID,
-} from "@/lib/espn-golf";
 import { pgaChampionship2026Field } from "@/lib/major-fields";
 import {
   buildPayoutDecision,
@@ -171,9 +168,9 @@ export default function PgaChampionship2026Page() {
             note="Jon Rahm and Alex Smalley finished three shots back."
           />
           <DashboardStat
-            label="ESPN event"
-            value={ESPN_PGA_CHAMPIONSHIP_2026_EVENT_ID}
-            note="Public scoring feed used by the final table."
+            label="Payment status"
+            value="Paid"
+            note="All five losing-member obligations are marked complete."
           />
         </section>
 
