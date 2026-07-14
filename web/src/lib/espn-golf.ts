@@ -1,5 +1,6 @@
 export const ESPN_PGA_CHAMPIONSHIP_2026_EVENT_ID = "401811947";
 export const ESPN_US_OPEN_2026_EVENT_ID = "401811952";
+export const ESPN_OPEN_CHAMPIONSHIP_2026_EVENT_ID = "401811957";
 
 function buildEspnGolfLeaderboardUrl(eventId: string): string {
   return `https://site.web.api.espn.com/apis/site/v2/sports/golf/leaderboard?league=pga&event=${eventId}`;
@@ -9,6 +10,8 @@ export const ESPN_PGA_CHAMPIONSHIP_2026_LEADERBOARD_URL =
   buildEspnGolfLeaderboardUrl(ESPN_PGA_CHAMPIONSHIP_2026_EVENT_ID);
 export const ESPN_US_OPEN_2026_LEADERBOARD_URL =
   buildEspnGolfLeaderboardUrl(ESPN_US_OPEN_2026_EVENT_ID);
+export const ESPN_OPEN_CHAMPIONSHIP_2026_LEADERBOARD_URL =
+  buildEspnGolfLeaderboardUrl(ESPN_OPEN_CHAMPIONSHIP_2026_EVENT_ID);
 
 type EspnRawStat = {
   name?: string;

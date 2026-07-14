@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 import { golfers, leagueTerm, majors, members, rosters } from "@/lib/data";
-import { usOpen2026Field } from "@/lib/major-fields";
+import { openChampionship2026Field } from "@/lib/major-fields";
 import {
   buildPayoutDecision,
   getFieldAvailabilityForYear,
@@ -51,14 +51,14 @@ export default function Season2026Page() {
     members,
   );
   const leader = standings[0];
-  const usOpenFieldAvailability = getFieldAvailabilityForYear(
+  const openFieldAvailability = getFieldAvailabilityForYear(
     rosters,
     golfers,
     seasonYear,
-    [...usOpen2026Field],
+    [...openChampionship2026Field],
   );
-  const missingUsOpenGolfersText =
-    usOpenFieldAvailability.missingGolfers.map((golfer) => golfer.name).join(" and ");
+  const missingOpenGolfersText =
+    openFieldAvailability.missingGolfers.map((golfer) => golfer.name).join(" and ");
 
   return (
     <main className="min-h-screen bg-[radial-gradient(circle_at_top,_rgba(255,250,240,0.97),_rgba(245,239,226,1)_42%,_rgba(226,214,184,0.98)_100%)]">
@@ -70,7 +70,7 @@ export default function Season2026Page() {
                 Current Season
               </p>
               <h1 className="mt-3 max-w-3xl text-4xl font-semibold tracking-tight sm:text-5xl">
-                2026 has two majors settled, and Shinnecock is next.
+                2026 has three majors settled, and Royal Birkdale is next.
               </h1>
               <p className="mt-5 max-w-2xl text-sm leading-7 text-cyan-50/88 sm:text-base">
                 This page tracks the live season state after the 2025 offseason:
@@ -123,7 +123,7 @@ export default function Season2026Page() {
             {
               label: "Season status",
               value: "In progress",
-              note: "The U.S. Open is the next active major page.",
+              note: "The Open Championship is the next active major page.",
             },
           ].map((item) => (
             <article key={item.label} className="rounded-[1.5rem] border border-line bg-card/90 p-5">
@@ -174,14 +174,14 @@ export default function Season2026Page() {
           </h2>
           <div className="mt-6 rounded-[1.5rem] border border-line bg-background/70 p-5">
             <p className="text-xs font-semibold uppercase tracking-[0.16em] text-accent">
-              U.S. Open field check
+              Open Championship field check
             </p>
             <p className="mt-3 text-base leading-7 text-foreground">
-              {usOpenFieldAvailability.listedGolferCount} of {usOpenFieldAvailability.activeGolferCount} active league golfers are listed for the upcoming U.S. Open.
+              {openFieldAvailability.listedGolferCount} of {openFieldAvailability.activeGolferCount} active league golfers are listed for the upcoming Open Championship.
             </p>
             <p className="mt-2 text-sm leading-6 text-muted">
-              {usOpenFieldAvailability.missingGolfers.length > 0
-                ? `${missingUsOpenGolfersText} ${usOpenFieldAvailability.missingGolfers.length === 1 ? "is" : "are"} not in the current field list.`
+              {openFieldAvailability.missingGolfers.length > 0
+                ? `${missingOpenGolfersText} ${openFieldAvailability.missingGolfers.length === 1 ? "is" : "are"} not in the current field list.`
                 : "Every active league golfer is currently listed in the field."}
             </p>
           </div>
@@ -196,18 +196,18 @@ export default function Season2026Page() {
                 <p className="mt-3 text-sm leading-6 text-muted">
                   {formatDateRange(major.startDate, major.endDate)}
                 </p>
-                {major.id === "major_2026_us_open" ? (
+                {major.id === "major_2026_open" ? (
                   <div className="mt-3 space-y-3">
                     <p className="text-sm leading-6 text-muted">
-                      {usOpenFieldAvailability.missingGolfers.length > 0
-                        ? `League golfers not currently listed: ${missingUsOpenGolfersText}.`
+                      {openFieldAvailability.missingGolfers.length > 0
+                        ? `League golfers not currently listed: ${missingOpenGolfersText}.`
                         : "All active league golfers are currently listed in the field."}
                     </p>
                     <Link
-                      href="/majors/2026-us-open"
+                      href="/majors/2026-open-championship"
                       className="inline-flex rounded-full border border-line bg-white/70 px-4 py-2 text-sm font-semibold text-foreground transition hover:bg-card"
                     >
-                      Open U.S. Open dashboard
+                      Open Championship dashboard
                     </Link>
                   </div>
                 ) : null}

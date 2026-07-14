@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 import { golfers, leagueTerm, majors, members, rosters } from "@/lib/data";
-import { usOpen2026Field } from "@/lib/major-fields";
+import { openChampionship2026Field } from "@/lib/major-fields";
 import { getFieldAvailabilityForYear, getResolvedMajors, getStandings } from "@/lib/league";
 
 export default function Home() {
@@ -17,14 +17,14 @@ export default function Home() {
     members,
   );
   const leader = standings[0];
-  const usOpenFieldAvailability = getFieldAvailabilityForYear(
+  const openFieldAvailability = getFieldAvailabilityForYear(
     rosters,
     golfers,
     2026,
-    [...usOpen2026Field],
+    [...openChampionship2026Field],
   );
-  const missingUsOpenGolfersText =
-    usOpenFieldAvailability.missingGolfers.map((golfer) => golfer.name).join(" and ");
+  const missingOpenGolfersText =
+    openFieldAvailability.missingGolfers.map((golfer) => golfer.name).join(" and ");
 
   return (
     <main className="min-h-screen bg-[radial-gradient(circle_at_top,_rgba(255,250,240,0.95),_rgba(245,239,226,1)_45%,_rgba(228,218,193,0.95)_100%)]">
@@ -149,18 +149,18 @@ export default function Home() {
               className="rounded-[2rem] border border-line bg-card p-6"
             >
               <p className="text-sm font-semibold uppercase tracking-[0.2em] text-accent">
-                U.S. Open field watch
+                Open Championship field watch
               </p>
               <p className="mt-5 text-base leading-7 text-foreground">
-                {usOpenFieldAvailability.listedGolferCount} of {usOpenFieldAvailability.activeGolferCount} active league golfers are listed for the upcoming U.S. Open.
+                {openFieldAvailability.listedGolferCount} of {openFieldAvailability.activeGolferCount} active league golfers are listed for the upcoming Open Championship.
               </p>
               <p className="mt-3 text-sm leading-6 text-muted">
-                {usOpenFieldAvailability.missingGolfers.length > 0
-                  ? `${missingUsOpenGolfersText} ${usOpenFieldAvailability.missingGolfers.length === 1 ? "is" : "are"} not in the current field list.`
+                {openFieldAvailability.missingGolfers.length > 0
+                  ? `${missingOpenGolfersText} ${openFieldAvailability.missingGolfers.length === 1 ? "is" : "are"} not in the current field list.`
                   : "Every active league golfer is currently listed in the field."}
               </p>
               <p className="mt-3 text-sm leading-6 text-muted">
-                Shinnecock Hills is loaded as the next major-week checkpoint.
+                Royal Birkdale is loaded as the next major-week checkpoint for Thursday, July 16.
               </p>
             </section>
           </aside>
