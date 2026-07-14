@@ -152,11 +152,7 @@ export default function OpenChampionship2026Page() {
             value={missingRows.length.toString()}
             note="League-owned golfers not in the current field list."
           />
-          <DashboardStat
-            label="Where to watch"
-            value="NBC / USA / Peacock"
-            note="Broadcast coverage listed for the Open Championship window."
-          />
+          <WatchCard />
         </section>
 
         <MajorScoreboard
@@ -320,6 +316,38 @@ function DashboardStat({
       <p className="text-sm font-medium text-muted">{label}</p>
       <p className="mt-2 text-3xl font-semibold">{value}</p>
       <p className="mt-2 text-sm leading-6 text-muted">{note}</p>
+    </article>
+  );
+}
+
+function WatchCard() {
+  return (
+    <article className="rounded-[1.35rem] border border-line bg-card/92 p-5">
+      <p className="text-sm font-medium text-muted">Where to watch</p>
+      <p className="mt-2 text-2xl font-semibold leading-8">12:35 AM CT</p>
+      <p className="mt-2 text-sm leading-6 text-muted">
+        First tee Thursday. ESPN lists coverage on NBC, USA Network, and Peacock.
+      </p>
+      <div className="mt-4 flex flex-wrap gap-2">
+        <a
+          href="https://www.peacocktv.com/sports/golf"
+          className="rounded-full border border-line bg-white/70 px-3 py-2 text-xs font-semibold text-foreground transition hover:bg-card"
+        >
+          Peacock
+        </a>
+        <a
+          href="https://www.nbcsports.com/golf"
+          className="rounded-full border border-line bg-white/70 px-3 py-2 text-xs font-semibold text-foreground transition hover:bg-card"
+        >
+          NBC Sports
+        </a>
+        <a
+          href="https://www.usanetwork.com/sports"
+          className="rounded-full border border-line bg-white/70 px-3 py-2 text-xs font-semibold text-foreground transition hover:bg-card"
+        >
+          USA Network
+        </a>
+      </div>
     </article>
   );
 }
