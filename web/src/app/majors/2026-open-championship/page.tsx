@@ -5,9 +5,10 @@ import {
   MajorScoreboard,
   type LeagueMajorScoreboardRow,
 } from "@/components/major-scoreboard";
-import { golfers, majors, members, rosters } from "@/lib/data";
+import { golfers, leagueTerm, majors, members, rosters } from "@/lib/data";
 import { openChampionship2026Field } from "@/lib/major-fields";
 import {
+  buildPayoutDecision,
   getActiveRostersForYear,
   normalizeGolferNameForFieldCheck,
 } from "@/lib/league";
@@ -15,13 +16,19 @@ import {
 export const metadata: Metadata = {
   title: "2026 Open Championship | Major Pool Winners",
   description:
-    "League-focused 2026 Open Championship dashboard with field availability, tee times, and live scoring.",
+    "League-focused 2026 Open Championship result, field context, and payout summary.",
 };
 
 const seasonYear = 2026;
 const openMajorId = "major_2026_open";
-const eventWeekStartDate = "2026-07-14";
 const leaderboardApiPath = "/api/majors/2026-open-championship/leaderboard";
+const openResult = {
+  winner: "Ryan Fox",
+  score: "10-under",
+  runnerUp: "Cameron Young",
+  margin: "1 stroke",
+  third: "Sam Burns",
+};
 
 function formatDateRange(startDate: string, endDate: string): string {
   const start = new Date(`${startDate}T12:00:00`);
@@ -43,6 +50,9 @@ function formatDateRange(startDate: string, endDate: string): string {
 
 export default function OpenChampionship2026Page() {
   const openMajor = majors.find((major) => major.id === openMajorId);
+  const payoutDecision = openMajor
+    ? buildPayoutDecision(openMajor, leagueTerm, golfers, rosters, members)
+    : null;
   const leagueRows = getLeagueOpenRows();
   const draftedInFieldRows = leagueRows.filter((row) => row.isInField);
   const missingRows = leagueRows.filter((row) => !row.isInField);
@@ -61,9 +71,7 @@ export default function OpenChampionship2026Page() {
   const championshipDates = openMajor
     ? formatDateRange(openMajor.startDate, openMajor.endDate)
     : "Jul 16 - Jul 19, 2026";
-  const eventWeekDates = openMajor
-    ? formatDateRange(eventWeekStartDate, openMajor.endDate)
-    : "Jul 14 - Jul 19, 2026";
+  const payoutEvent = payoutDecision?.payoutEvent;
 
   return (
     <main className="min-h-screen bg-[radial-gradient(circle_at_top,_rgba(240,248,250,0.98),_rgba(245,239,226,1)_46%,_rgba(225,233,218,0.98)_100%)]">
@@ -72,16 +80,16 @@ export default function OpenChampionship2026Page() {
           <div className="grid gap-7 px-6 py-7 lg:grid-cols-[1.2fr_0.8fr] lg:px-9 lg:py-9">
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.28em] text-cyan-100/85">
-                Major week command center
+                Final major result
               </p>
               <h1 className="mt-3 text-4xl font-semibold tracking-tight sm:text-5xl">
                 2026 Open Championship
               </h1>
               <p className="mt-4 max-w-3xl text-sm leading-7 text-cyan-50/90 sm:text-base">
-                Royal Birkdale hosts the 154th Open Championship from{" "}
-                {championshipDates}. The current field is loaded with Round 1
-                and Round 2 tee times in Central time, league field status, and
-                scoring rows ready for Thursday, July 16.
+                Ryan Fox won the 154th Open Championship at Royal Birkdale at{" "}
+                {openResult.score}, {openResult.margin} clear of{" "}
+                {openResult.runnerUp}. The league result is settled here with
+                field context, final leaderboard access, and payout status.
               </p>
 
               <div className="mt-6 flex flex-wrap gap-3">
@@ -114,23 +122,23 @@ export default function OpenChampionship2026Page() {
 
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-1">
               <HeroMetric
-                label="Venue"
-                value={openMajor?.venue ?? "Royal Birkdale Golf Club"}
-                note={openMajor?.location ?? "Southport, England"}
+                label="Champion"
+                value={openResult.winner}
+                note={`${openResult.score} at ${openMajor?.venue ?? "Royal Birkdale Golf Club"}`}
               />
               <HeroMetric
-                label="Event week"
-                value={eventWeekDates}
-                note={`Championship scoring: ${championshipDates}`}
-              />
-              <HeroMetric
-                label="League field"
-                value={`${draftedInFieldRows.length} of ${leagueRows.length}`}
+                label="League payout"
+                value={payoutEvent?.isDraftedWinner ? "Paid" : "No payout"}
                 note={
-                  missingRows.length > 0
-                    ? `${missingRows.map((row) => row.golferName).join(", ")} missing from the field list.`
-                    : "Every active league golfer is in the field."
+                  payoutEvent?.isDraftedWinner
+                    ? "All losing-member obligations are marked complete."
+                    : "Fox was not rostered, so no payment obligations were created."
                 }
+              />
+              <HeroMetric
+                label="Runner-up"
+                value={openResult.runnerUp}
+                note={`${openResult.third} finished third at 8-under.`}
               />
             </div>
           </div>
@@ -140,7 +148,7 @@ export default function OpenChampionship2026Page() {
           <DashboardStat
             label="Field size"
             value={openChampionship2026Field.length.toString()}
-            note="Current ESPN field stored for league matching."
+            note="Final stored field used for league matching."
           />
           <DashboardStat
             label="Drafted in field"
@@ -148,11 +156,19 @@ export default function OpenChampionship2026Page() {
             note="Active league golfers matched into The Open field."
           />
           <DashboardStat
-            label="Active missing"
-            value={missingRows.length.toString()}
-            note="League-owned golfers not in the current field list."
+            label="Final score"
+            value="-10"
+            note={`${championshipDates}; Cameron Young finished one shot back.`}
           />
-          <WatchCard />
+          <DashboardStat
+            label="Payment status"
+            value={payoutEvent?.isDraftedWinner ? "Paid" : "Clear"}
+            note={
+              payoutEvent?.isDraftedWinner
+                ? "All losing-member obligations are marked complete."
+                : "No league obligations were created for the undrafted winner."
+            }
+          />
         </section>
 
         <MajorScoreboard
@@ -160,7 +176,7 @@ export default function OpenChampionship2026Page() {
           leaderboardApiPath={leaderboardApiPath}
           eyebrow="League scoreboard"
           title="Drafted golfers at Royal Birkdale"
-          description="The table is limited to active league golfers. Round 1 and Round 2 tee times are available now in Central time, with score columns filling in when play begins."
+          description="The table is limited to active league golfers. Final scoring is preserved from the ESPN feed, with the Open result marked settled."
         />
 
         <section className="grid gap-5 lg:grid-cols-[1.35fr_0.65fr]">
@@ -175,7 +191,7 @@ export default function OpenChampionship2026Page() {
                 </h2>
               </div>
               <p className="text-sm text-muted">
-                {draftedInFieldRows.length} league golfers currently available.
+                {draftedInFieldRows.length} league golfers were in the field.
               </p>
             </div>
 
@@ -261,12 +277,12 @@ export default function OpenChampionship2026Page() {
                 Birkdale setup
               </p>
               <h2 className="mt-2 text-2xl font-semibold tracking-tight">
-                Par 70, 7,223 yards
+                Par 70, 7,156 yards
               </h2>
               <p className="mt-4 text-sm leading-6 text-emerald-50/86">
-                The Open returns to Royal Birkdale for the first time since
-                2017. Scottie Scheffler enters as defending champion after the
-                2025 Royal Portrush win.
+                Fox closed 72-68-62-68 for 270 and birdied the 72nd hole to
+                avoid a playoff. The result did not create a league payout
+                because the champion was not on an active roster.
               </p>
               <a
                 href="https://www.espn.com/golf/leaderboard?tournamentId=401811957"
@@ -316,38 +332,6 @@ function DashboardStat({
       <p className="text-sm font-medium text-muted">{label}</p>
       <p className="mt-2 text-3xl font-semibold">{value}</p>
       <p className="mt-2 text-sm leading-6 text-muted">{note}</p>
-    </article>
-  );
-}
-
-function WatchCard() {
-  return (
-    <article className="rounded-[1.35rem] border border-line bg-card/92 p-5">
-      <p className="text-sm font-medium text-muted">Where to watch</p>
-      <p className="mt-2 text-2xl font-semibold leading-8">12:35 AM CT</p>
-      <p className="mt-2 text-sm leading-6 text-muted">
-        First tee Thursday. ESPN lists coverage on NBC, USA Network, and Peacock.
-      </p>
-      <div className="mt-4 flex flex-wrap gap-2">
-        <a
-          href="https://www.peacocktv.com/sports/golf"
-          className="rounded-full border border-line bg-white/70 px-3 py-2 text-xs font-semibold text-foreground transition hover:bg-card"
-        >
-          Peacock
-        </a>
-        <a
-          href="https://www.nbcsports.com/golf"
-          className="rounded-full border border-line bg-white/70 px-3 py-2 text-xs font-semibold text-foreground transition hover:bg-card"
-        >
-          NBC Sports
-        </a>
-        <a
-          href="https://www.usanetwork.com/sports"
-          className="rounded-full border border-line bg-white/70 px-3 py-2 text-xs font-semibold text-foreground transition hover:bg-card"
-        >
-          USA Network
-        </a>
-      </div>
     </article>
   );
 }

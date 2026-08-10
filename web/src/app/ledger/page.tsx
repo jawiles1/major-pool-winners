@@ -1,7 +1,11 @@
 import Link from "next/link";
 
 import { golfers, leagueTerm, majors, members, rosters } from "@/lib/data";
-import { buildPayoutDecision, getResolvedMajors } from "@/lib/league";
+import {
+  buildPayoutDecision,
+  getResolvedMajors,
+  getSeasonMajors,
+} from "@/lib/league";
 
 function formatCurrency(amount: number): string {
   return new Intl.NumberFormat("en-US", {
@@ -28,10 +32,16 @@ function formatDateRange(startDate: string, endDate: string): string {
 }
 
 export default function LedgerPage() {
+  const closedSeasonYear = 2026;
   const membersById = new Map(members.map((member) => [member.id, member]));
   const resolvedMajors = getResolvedMajors(majors).sort((left, right) =>
     left.endDate.localeCompare(right.endDate),
   );
+  const closedSeasonMajors = getSeasonMajors(majors, closedSeasonYear);
+  const closedSeasonResolvedMajors = getResolvedMajors(closedSeasonMajors);
+  const isClosedSeasonComplete =
+    closedSeasonMajors.length > 0 &&
+    closedSeasonMajors.length === closedSeasonResolvedMajors.length;
   const latestResolvedMajor = resolvedMajors.at(-1);
   const coveredThrough = latestResolvedMajor
     ? `${latestResolvedMajor.year} ${latestResolvedMajor.name}`
@@ -75,6 +85,9 @@ export default function LedgerPage() {
     (sum, { payoutEvent }) => sum + payoutEvent.totalPayout,
     0,
   );
+  const outstandingObligations = payoutEvents
+    .flatMap(({ obligations }) => obligations)
+    .filter((obligation) => obligation.status === "unpaid").length;
 
   return (
     <main className="min-h-screen bg-[radial-gradient(circle_at_top,_rgba(255,250,240,0.97),_rgba(245,239,226,1)_45%,_rgba(226,214,184,0.98)_100%)]">
@@ -86,12 +99,13 @@ export default function LedgerPage() {
                 Admin Ledger
               </p>
               <h1 className="mt-3 max-w-3xl text-4xl font-semibold tracking-tight sm:text-5xl">
-                Settlement view for every resolved major.
+                Settlement view through the closed 2026 major season.
               </h1>
               <p className="mt-5 max-w-2xl text-sm leading-7 text-slate-50/88 sm:text-base">
                 This administrator-facing page shows payout events, obligations,
-                and net owner positions through the {coveredThrough}. It keeps
-                the general standings clean while preserving the full payment trail.
+                and net owner positions through the {coveredThrough}. The 2026
+                Open is recorded as an undrafted-winner result, so the season is
+                closed without adding new payment obligations.
               </p>
 
               <div className="mt-7 flex flex-wrap gap-3">
@@ -113,11 +127,13 @@ export default function LedgerPage() {
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-1">
               <article className="rounded-[1.75rem] border border-white/12 bg-white/10 p-5 backdrop-blur-sm">
                 <p className="text-xs uppercase tracking-[0.18em] text-slate-100/80">
-                  Payout events
+                  2026 season
                 </p>
-                <p className="mt-2 text-3xl font-semibold">{payoutEvents.length}</p>
+                <p className="mt-2 text-3xl font-semibold">
+                  {isClosedSeasonComplete ? "Closed" : "Open"}
+                </p>
                 <p className="mt-2 text-sm leading-6 text-slate-50/82">
-                  Drafted winning majors that generated obligations through {coveredThrough}.
+                  {closedSeasonResolvedMajors.length} of {closedSeasonMajors.length} majors settled.
                 </p>
               </article>
 
@@ -134,7 +150,7 @@ export default function LedgerPage() {
           </div>
         </header>
 
-        <section className="grid gap-4 md:grid-cols-3">
+        <section className="grid gap-4 md:grid-cols-4">
           {[
             {
               label: "Total payout value",
@@ -145,6 +161,11 @@ export default function LedgerPage() {
               label: "Total obligations",
               value: totalObligations.toString(),
               note: "Five obligations are created each time a rostered golfer wins.",
+            },
+            {
+              label: "Outstanding",
+              value: outstandingObligations.toString(),
+              note: "Unpaid obligations remaining across all resolved majors.",
             },
             {
               label: "Per-loss amount",

@@ -91,7 +91,8 @@
     "endDate": "2026-07-19",
     "venue": "Royal Birkdale Golf Club",
     "location": "Southport, England",
-    "status": "upcoming"
+    "status": "winner_undrafted",
+    "winnerName": "Ryan Fox"
   },
   {
     "id": "major_2027_masters",

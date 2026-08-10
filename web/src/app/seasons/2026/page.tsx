@@ -1,10 +1,8 @@
 import Link from "next/link";
 
 import { golfers, leagueTerm, majors, members, rosters } from "@/lib/data";
-import { openChampionship2026Field } from "@/lib/major-fields";
 import {
   buildPayoutDecision,
-  getFieldAvailabilityForYear,
   getMemberRosterForYear,
   getResolvedMajors,
   getSeasonMajors,
@@ -39,7 +37,6 @@ export default function Season2026Page() {
   const seasonYear = 2026;
   const seasonMajors = getSeasonMajors(majors, seasonYear);
   const resolvedMajors = getResolvedMajors(seasonMajors);
-  const upcomingMajors = seasonMajors.filter((major) => major.status === "upcoming");
   const payoutDecisions = resolvedMajors.map((major) =>
     buildPayoutDecision(major, leagueTerm, golfers, rosters, members),
   );
@@ -51,14 +48,6 @@ export default function Season2026Page() {
     members,
   );
   const leader = standings[0];
-  const openFieldAvailability = getFieldAvailabilityForYear(
-    rosters,
-    golfers,
-    seasonYear,
-    [...openChampionship2026Field],
-  );
-  const missingOpenGolfersText =
-    openFieldAvailability.missingGolfers.map((golfer) => golfer.name).join(" and ");
 
   return (
     <main className="min-h-screen bg-[radial-gradient(circle_at_top,_rgba(255,250,240,0.97),_rgba(245,239,226,1)_42%,_rgba(226,214,184,0.98)_100%)]">
@@ -70,12 +59,12 @@ export default function Season2026Page() {
                 Current Season
               </p>
               <h1 className="mt-3 max-w-3xl text-4xl font-semibold tracking-tight sm:text-5xl">
-                2026 has three majors settled, and Royal Birkdale is next.
+                2026 has four majors settled through Royal Birkdale.
               </h1>
               <p className="mt-5 max-w-2xl text-sm leading-7 text-cyan-50/88 sm:text-base">
                 This page tracks the live season state after the 2025 offseason:
-                completed majors, upcoming schedule, and the current rosters in
-                play for the year.
+                completed majors, payout status, and the current rosters in play
+                for the year.
               </p>
 
               <div className="mt-7 flex flex-wrap gap-3">
@@ -113,17 +102,17 @@ export default function Season2026Page() {
             {
               label: "Resolved majors",
               value: resolvedMajors.length.toString(),
-              note: "Completed and paid majors in 2026 so far.",
+              note: "Completed 2026 majors recorded in the league ledger.",
             },
             {
-              label: "Upcoming majors",
-              value: upcomingMajors.length.toString(),
-              note: "Remaining events still to be played this season.",
+              label: "Remaining majors",
+              value: (seasonMajors.length - resolvedMajors.length).toString(),
+              note: "Events still to be played this season.",
             },
             {
               label: "Season status",
-              value: "In progress",
-              note: "The Open Championship is the next active major page.",
+              value: "Settled",
+              note: "All 2026 major results are recorded.",
             },
           ].map((item) => (
             <article key={item.label} className="rounded-[1.5rem] border border-line bg-card/90 p-5">
@@ -139,7 +128,7 @@ export default function Season2026Page() {
             Completed majors
           </p>
           <h2 className="mt-2 text-2xl font-semibold tracking-tight">
-            2026 results so far
+            2026 final results
           </h2>
           <div className="mt-6 grid gap-4 lg:grid-cols-2">
             {payoutDecisions.map(({ payoutEvent, winnerMatch }) => {
@@ -162,57 +151,6 @@ export default function Season2026Page() {
                 </article>
               );
             })}
-          </div>
-        </section>
-
-        <section className="rounded-[2rem] border border-line bg-card/90 p-6 sm:p-8">
-          <p className="text-sm font-semibold uppercase tracking-[0.2em] text-accent">
-            Upcoming schedule
-          </p>
-          <h2 className="mt-2 text-2xl font-semibold tracking-tight">
-            Remaining 2026 majors
-          </h2>
-          <div className="mt-6 rounded-[1.5rem] border border-line bg-background/70 p-5">
-            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-accent">
-              Open Championship field check
-            </p>
-            <p className="mt-3 text-base leading-7 text-foreground">
-              {openFieldAvailability.listedGolferCount} of {openFieldAvailability.activeGolferCount} active league golfers are listed for the upcoming Open Championship.
-            </p>
-            <p className="mt-2 text-sm leading-6 text-muted">
-              {openFieldAvailability.missingGolfers.length > 0
-                ? `${missingOpenGolfersText} ${openFieldAvailability.missingGolfers.length === 1 ? "is" : "are"} not in the current field list.`
-                : "Every active league golfer is currently listed in the field."}
-            </p>
-          </div>
-          <div className="mt-6 grid gap-4 lg:grid-cols-3">
-            {upcomingMajors.map((major) => (
-              <article key={major.id} className="rounded-[1.5rem] border border-line bg-background/70 p-5">
-                <p className="text-xs font-semibold uppercase tracking-[0.16em] text-accent">
-                  {major.name}
-                </p>
-                <h3 className="mt-2 text-lg font-semibold">{major.venue}</h3>
-                <p className="mt-2 text-sm text-muted">{major.location}</p>
-                <p className="mt-3 text-sm leading-6 text-muted">
-                  {formatDateRange(major.startDate, major.endDate)}
-                </p>
-                {major.id === "major_2026_open" ? (
-                  <div className="mt-3 space-y-3">
-                    <p className="text-sm leading-6 text-muted">
-                      {openFieldAvailability.missingGolfers.length > 0
-                        ? `League golfers not currently listed: ${missingOpenGolfersText}.`
-                        : "All active league golfers are currently listed in the field."}
-                    </p>
-                    <Link
-                      href="/majors/2026-open-championship"
-                      className="inline-flex rounded-full border border-line bg-white/70 px-4 py-2 text-sm font-semibold text-foreground transition hover:bg-card"
-                    >
-                      Open Championship dashboard
-                    </Link>
-                  </div>
-                ) : null}
-              </article>
-            ))}
           </div>
         </section>
 
