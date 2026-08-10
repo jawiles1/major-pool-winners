@@ -4,7 +4,7 @@ import { golfers, leagueTerm, majors, members, rosters } from "@/lib/data";
 import { buildPayoutDecision, getSeasonMajors } from "@/lib/league";
 
 const completedSeasonYear = 2025;
-const upcomingSeasonYear = 2026;
+const currentSeasonYear = 2026;
 
 function formatDateRange(startDate: string, endDate: string): string {
   const start = new Date(`${startDate}T12:00:00`);
@@ -24,7 +24,7 @@ function formatDateRange(startDate: string, endDate: string): string {
 
 export default function MajorsPage() {
   const majors2025 = getSeasonMajors(majors, completedSeasonYear);
-  const majors2026 = getSeasonMajors(majors, upcomingSeasonYear);
+  const majors2026 = getSeasonMajors(majors, currentSeasonYear);
   const payoutDecisions2025 = majors2025.map((major) =>
     buildPayoutDecision(major, leagueTerm, golfers, rosters, members),
   );
@@ -109,9 +109,9 @@ export default function MajorsPage() {
               note: "2025 is ready for payout and history review.",
             },
             {
-              label: "Next wave",
+              label: "Current season",
               value: majors2026.length.toString(),
-              note: "2026 results and remaining major pages are loaded.",
+              note: "2026 results pages are loaded through the Open.",
             },
           ].map((item) => (
             <article
@@ -194,7 +194,7 @@ export default function MajorsPage() {
               </h2>
             </div>
             <p className="text-sm text-muted">
-              Masters, PGA, and U.S. Open are settled. The Open is ready for tournament week.
+              All four 2026 majors are settled, including Ryan Fox at Royal Birkdale.
             </p>
           </div>
 
@@ -246,7 +246,7 @@ export default function MajorsPage() {
                       href="/majors/2026-open-championship"
                       className="font-semibold text-accent underline-offset-4 hover:underline"
                     >
-                      Open the Open Championship command center.
+                      Open the final Open Championship result page.
                     </Link>
                   ) : (
                     "Daily leaderboard tracking and cut-status context will live on the dedicated page for this major."

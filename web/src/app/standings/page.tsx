@@ -54,7 +54,7 @@ export default function StandingsPage() {
               </h1>
               <p className="mt-5 max-w-2xl text-sm leading-7 text-amber-50/88 sm:text-base">
                 Standings are ranked by total earnings from major payouts. This
-                page shows the 2025 race, the 2026 picture so far, and the full
+                page shows the 2025 race, the settled 2026 picture, and the full
                 leaderboard across all completed majors to date.
               </p>
 
@@ -95,7 +95,7 @@ export default function StandingsPage() {
                 </p>
                 <p className="mt-2 text-3xl font-semibold">{allResolvedMajors.length}</p>
                 <p className="mt-2 text-sm leading-6 text-amber-50/82">
-                  Includes the full 2025 season plus the 2026 Masters and PGA.
+                  Includes the full 2025 season plus all resolved 2026 majors.
                 </p>
               </article>
             </div>
@@ -112,7 +112,7 @@ export default function StandingsPage() {
             {
               label: "2026 completed majors",
               value: majors2026Resolved.length.toString(),
-              note: "Current season results recorded so far.",
+              note: "Current season results recorded through the Open.",
             },
             {
               label: "Ranking rule",
@@ -145,7 +145,7 @@ export default function StandingsPage() {
 
         <StandingsSection
           title="2026 season standings"
-          subtitle="Current standings based on completed 2026 majors so far."
+          subtitle="Current standings based on all completed 2026 majors."
           rows={standings2026}
         />
       </div>
