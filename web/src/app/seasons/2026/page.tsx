@@ -8,6 +8,10 @@ import {
   getSeasonMajors,
   getStandings,
 } from "@/lib/league";
+import {
+  getSeason2026EarningsDraftRows,
+  seasonEarningsSources,
+} from "@/lib/season-earnings";
 
 function formatDateRange(startDate: string, endDate: string): string {
   const start = new Date(`${startDate}T12:00:00`);
@@ -48,6 +52,7 @@ export default function Season2026Page() {
     members,
   );
   const leader = standings[0];
+  const replacementDraftRows = getSeason2026EarningsDraftRows(members, golfers);
 
   return (
     <main className="min-h-screen bg-[radial-gradient(circle_at_top,_rgba(255,250,240,0.97),_rgba(245,239,226,1)_42%,_rgba(226,214,184,0.98)_100%)]">
@@ -151,6 +156,65 @@ export default function Season2026Page() {
                 </article>
               );
             })}
+          </div>
+        </section>
+
+        <section className="rounded-[2rem] border border-line bg-card/90 p-6 sm:p-8">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <p className="text-sm font-semibold uppercase tracking-[0.2em] text-accent">
+                Replacement draft
+              </p>
+              <h2 className="mt-2 text-2xl font-semibold tracking-tight">
+                2027 drop-and-add order
+              </h2>
+            </div>
+            <Link
+              href="/data-check/2026"
+              className="inline-flex rounded-full border border-line bg-white/70 px-4 py-2 text-sm font-semibold text-foreground transition hover:bg-card"
+            >
+              Verify earnings detail
+            </Link>
+          </div>
+          <p className="mt-3 max-w-3xl text-sm leading-7 text-muted">
+            {seasonEarningsSources.draftOrderRule} No 2026 tie-breaker is needed
+            because every team finished with a unique season total.
+          </p>
+
+          <div className="mt-6 overflow-x-auto rounded-[1.5rem] border border-line">
+            <div className="min-w-[760px]">
+              <div className="grid grid-cols-[0.7fr_1.6fr_1fr_1fr] gap-3 bg-[#173c27] px-4 py-3 text-xs font-semibold uppercase tracking-[0.16em] text-emerald-50">
+                <div>Pick</div>
+                <div>Team</div>
+                <div>2026 earnings</div>
+                <div>Total winnings</div>
+              </div>
+
+              {replacementDraftRows.map((row, index) => (
+                <div
+                  key={row.member.id}
+                  className={`grid grid-cols-[0.7fr_1.6fr_1fr_1fr] gap-3 px-4 py-4 text-sm ${
+                    index % 2 === 0 ? "bg-card/70" : "bg-background/70"
+                  }`}
+                >
+                  <div className="font-semibold text-foreground">
+                    {row.draftOrder}
+                  </div>
+                  <div>
+                    <p className="font-semibold text-foreground">
+                      {row.member.displayName}
+                    </p>
+                    <p className="text-xs text-muted">{row.member.teamName}</p>
+                  </div>
+                  <div className="font-semibold text-foreground">
+                    {formatCurrency(row.seasonTotal)}
+                  </div>
+                  <div className="text-muted">
+                    {formatCurrency(row.totalToDate)}
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </section>
 

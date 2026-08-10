@@ -66,6 +66,37 @@ Recommended Vercel settings:
 - Build Command: default, or `npm run build`
 - Output Directory: default
 
+## Operator Notes
+
+Use Codex for normal season maintenance. The app is currently driven by local
+JSON/TypeScript data in `web/data` and `web/src/lib`, then deployed from the
+GitHub `main` branch to Vercel.
+
+Good update prompts:
+
+- `Run updates for 2027 Masters`
+- `Run updates for 2027 PGA Championship`
+- `Run updates for 2027 U.S. Open`
+- `Run updates for 2027 Open Championship`
+- `Close out 2027 Masters`
+- `Close out 2027 PGA Championship`
+- `Close out 2027 U.S. Open`
+- `Close out 2027 Open Championship`
+- `Calculate the 2027 replacement draft order`
+
+For a major-week update, Codex should verify the current field, scoring source,
+venue details, and links, then update the relevant season/major pages. For a
+closeout, Codex should verify the final result, update `web/data/majors.json`,
+mark any payout obligations paid when the winner is rostered, update affected
+season/ledger/standings copy, and run `npm run lint` plus `npm run build` in
+`web/`.
+
+Replacement draft order is based on lowest current-year team prize-money
+earnings first. If current-year earnings are tied, use total league-term
+winnings through that season as the tie-breaker. Keep the season page summary
+compact and link to a detail page where participants can audit the player-level
+earnings.
+
 ## Key Product Principle
 
 The website should be simple enough for league members to check during a major on their phone in under 10 seconds.

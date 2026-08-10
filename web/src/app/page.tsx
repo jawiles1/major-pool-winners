@@ -64,38 +64,49 @@ export default function Home() {
 
             <div
               id="mvp-sections"
-              className="mt-10 grid gap-4 sm:grid-cols-2 xl:grid-cols-4"
+              className="mt-10 grid gap-4 sm:grid-cols-2 xl:grid-cols-5"
             >
               {[
                 {
                   label: "History",
                   value: "2025 season",
                   note: "Start with the original draft and first major cycle.",
+                  href: "/seasons/2025",
+                },
+                {
+                  label: "History",
+                  value: "2026 season",
+                  note: "Review the settled season and next replacement order.",
+                  href: "/seasons/2026",
                 },
                 {
                   label: "Majors",
                   value: "4 events",
                   note: "Each season will get dedicated major pages.",
+                  href: "/majors",
                 },
                 {
                   label: "Rosters",
                   value: "16 majors",
                   note: "The full 2025-2028 term is preserved year by year.",
+                  href: "/teams",
                 },
                 {
                   label: "Ledger",
                   value: "5 payers",
                   note: "One drafted win creates five obligations.",
+                  href: "/ledger",
                 },
               ].map((item) => (
-                <article
-                  key={item.label}
+                <Link
+                  key={`${item.label}-${item.value}`}
+                  href={item.href}
                   className="rounded-[1.5rem] border border-line bg-background/70 p-4"
                 >
                   <p className="text-sm font-medium text-muted">{item.label}</p>
                   <p className="mt-2 text-2xl font-semibold">{item.value}</p>
                   <p className="mt-2 text-sm leading-6 text-muted">{item.note}</p>
-                </article>
+                </Link>
               ))}
             </div>
           </div>
