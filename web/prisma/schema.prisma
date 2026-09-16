@@ -1,0 +1,35 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("PRISMA_DATABASE_URL")
+}
+
+model DancingRabbitScore {
+  id         String   @id @default(cuid())
+  dayId      String
+  playerId   String
+  holeNumber Int
+  gross      Int
+  updatedAt  DateTime @updatedAt
+  createdAt  DateTime @default(now())
+
+  @@unique([dayId, playerId, holeNumber])
+  @@index([dayId])
+  @@index([playerId])
+}
+
+model DancingRabbitHandicapOverride {
+  id        String   @id @default(cuid())
+  dayId     String
+  playerId  String
+  handicap  Int
+  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
+
+  @@unique([dayId, playerId])
+  @@index([dayId])
+  @@index([playerId])
+}

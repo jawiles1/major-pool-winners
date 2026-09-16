@@ -19,6 +19,8 @@ import {
 import { useHandicapOverrides } from "@/lib/dancing-rabbit-handicap-overrides";
 
 const storageKey = "dancing-rabbit-2026-scores";
+const stateEndpoint = "/api/trips/dancing-rabbit-2026/state";
+const scoresEndpoint = "/api/trips/dancing-rabbit-2026/scores";
 
 function loadInitialScores(): ScoreState {
   if (typeof window === "undefined") {
@@ -61,20 +63,24 @@ export function DancingRabbitScoreApp() {
   }, [scores]);
 
   useEffect(() => {
-    function handleStorage(event: StorageEvent) {
-      if (event.key !== storageKey || !event.newValue) {
-        return;
-      }
-
+    async function refreshScores() {
       try {
-        setScores({ ...createEmptyScoreState(), ...JSON.parse(event.newValue) });
+        const response = await fetch(stateEndpoint, { cache: "no-store" });
+
+        if (!response.ok) {
+          return;
+        }
+
+        const data = (await response.json()) as { scores?: ScoreState };
+        setScores({ ...createEmptyScoreState(), ...data.scores });
       } catch {
-        setScores(createEmptyScoreState());
+        // Keep the optimistic local state if the network is temporarily unavailable.
       }
     }
 
-    window.addEventListener("storage", handleStorage);
-    return () => window.removeEventListener("storage", handleStorage);
+    refreshScores();
+    const intervalId = window.setInterval(refreshScores, 5000);
+    return () => window.clearInterval(intervalId);
   }, []);
 
   function updateScore(playerId: string, holeNumber: number, value: string) {
@@ -90,6 +96,19 @@ export function DancingRabbitScoreApp() {
         },
       },
     }));
+
+    fetch(scoresEndpoint, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        dayId: activeDayId,
+        playerId,
+        holeNumber,
+        gross: Number.isFinite(parsed) && parsed > 0 ? parsed : 0,
+      }),
+    }).catch(() => {
+      // Keep the local edit visible; polling will reconcile when connectivity returns.
+    });
   }
 
   function clearDay() {
@@ -97,6 +116,14 @@ export function DancingRabbitScoreApp() {
       ...current,
       [activeDayId]: createEmptyScoreState()[activeDayId],
     }));
+
+    fetch(scoresEndpoint, {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ dayId: activeDayId }),
+    }).catch(() => {
+      // Keep the local clear visible; polling will reconcile when connectivity returns.
+    });
   }
 
   return (

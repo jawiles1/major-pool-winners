@@ -7,29 +7,41 @@ import {
   type HandicapOverrideState,
 } from "@/lib/dancing-rabbit";
 
-export const handicapOverrideStorageKey = "dancing-rabbit-2026-handicap-overrides";
 const handicapOverrideEventName = "dancing-rabbit-handicap-overrides-updated";
+const stateEndpoint = "/api/trips/dancing-rabbit-2026/state";
+const handicapsEndpoint = "/api/trips/dancing-rabbit-2026/handicaps";
 
-export function loadHandicapOverrides(): HandicapOverrideState {
-  if (typeof window === "undefined") {
-    return createEmptyHandicapOverrideState();
+export async function loadHandicapOverrides(): Promise<HandicapOverrideState> {
+  const response = await fetch(stateEndpoint, { cache: "no-store" });
+
+  if (!response.ok) {
+    throw new Error("Unable to load handicap overrides.");
   }
 
-  const stored = window.localStorage.getItem(handicapOverrideStorageKey);
+  const data = (await response.json()) as {
+    handicapOverrides?: HandicapOverrideState;
+  };
 
-  if (!stored) {
-    return createEmptyHandicapOverrideState();
-  }
-
-  try {
-    return { ...createEmptyHandicapOverrideState(), ...JSON.parse(stored) };
-  } catch {
-    return createEmptyHandicapOverrideState();
-  }
+  return {
+    ...createEmptyHandicapOverrideState(),
+    ...data.handicapOverrides,
+  };
 }
 
-export function saveHandicapOverrides(overrides: HandicapOverrideState) {
-  window.localStorage.setItem(handicapOverrideStorageKey, JSON.stringify(overrides));
+export async function saveHandicapOverrides(overrides: HandicapOverrideState) {
+  const response = await fetch(handicapsEndpoint, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      "x-admin-password": "rabbit2026",
+    },
+    body: JSON.stringify({ overrides }),
+  });
+
+  if (!response.ok) {
+    throw new Error("Unable to save handicap overrides.");
+  }
+
   window.dispatchEvent(new Event(handicapOverrideEventName));
 }
 
@@ -38,31 +50,32 @@ export function useHandicapOverrides(): [
   (overrides: HandicapOverrideState) => void,
 ] {
   const [overrides, setOverrides] = useState<HandicapOverrideState>(() =>
-    loadHandicapOverrides(),
+    createEmptyHandicapOverrideState(),
   );
 
   useEffect(() => {
-    function refresh() {
-      setOverrides(loadHandicapOverrides());
-    }
-
-    function handleStorage(event: StorageEvent) {
-      if (event.key === handicapOverrideStorageKey) {
-        refresh();
+    async function refresh() {
+      try {
+        setOverrides(await loadHandicapOverrides());
+      } catch {
+        setOverrides(createEmptyHandicapOverrideState());
       }
     }
 
-    window.addEventListener("storage", handleStorage);
+    refresh();
+    const intervalId = window.setInterval(refresh, 5000);
     window.addEventListener(handicapOverrideEventName, refresh);
     return () => {
-      window.removeEventListener("storage", handleStorage);
+      window.clearInterval(intervalId);
       window.removeEventListener(handicapOverrideEventName, refresh);
     };
   }, []);
 
   function updateOverrides(nextOverrides: HandicapOverrideState) {
-    saveHandicapOverrides(nextOverrides);
     setOverrides(nextOverrides);
+    saveHandicapOverrides(nextOverrides).catch(() => {
+      setOverrides(overrides);
+    });
   }
 
   return [overrides, updateOverrides];
