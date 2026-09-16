@@ -1,0 +1,155 @@
+{
+  "id": "dancing-rabbit-2026",
+  "name": "Dancing Rabbit 2026",
+  "location": "Dancing Rabbit Golf Club, Choctaw, MS",
+  "overallBuyIn": 100,
+  "overallPayouts": [400, 250, 150],
+  "players": [
+    { "id": "josh-wiles", "name": "Josh Wiles", "shortName": "Josh", "handicaps": { "azaleas": 7, "oaks": 7 } },
+    { "id": "david-bosco", "name": "David Bosco", "shortName": "David", "handicaps": { "azaleas": 4, "oaks": 3 } },
+    { "id": "ed-buckingham", "name": "Ed Buckingham", "shortName": "Ed", "handicaps": { "azaleas": 13, "oaks": 13 } },
+    { "id": "joe-connors", "name": "Joe Connors", "shortName": "Joe", "handicaps": { "azaleas": 9, "oaks": 8 } },
+    { "id": "jonathan-creath", "name": "Jonathan Creath", "shortName": "Jonathan", "handicaps": { "azaleas": 10, "oaks": 9 } },
+    { "id": "taylor-fyfe", "name": "Taylor Fyfe", "shortName": "Taylor", "handicaps": { "azaleas": 3, "oaks": 3 } },
+    { "id": "michael-otoole", "name": "Michael O'Toole", "shortName": "Michael", "handicaps": { "azaleas": 5, "oaks": 5 } },
+    { "id": "tom-triolo", "name": "Tom Triolo", "shortName": "Tom", "handicaps": { "azaleas": 8, "oaks": 8 }, "note": "Assigned course handicap, not an index." }
+  ],
+  "courses": [
+    {
+      "id": "azaleas",
+      "name": "The Azaleas",
+      "tee": "Blue",
+      "rating": 72.1,
+      "slope": 130,
+      "source": "Official Dancing Rabbit Azaleas scorecard PDF, Blue tee row.",
+      "holes": [
+        { "number": 1, "par": 4, "yards": 385, "strokeIndex": 17 },
+        { "number": 2, "par": 5, "yards": 517, "strokeIndex": 9 },
+        { "number": 3, "par": 4, "yards": 412, "strokeIndex": 3 },
+        { "number": 4, "par": 3, "yards": 155, "strokeIndex": 13 },
+        { "number": 5, "par": 5, "yards": 545, "strokeIndex": 7 },
+        { "number": 6, "par": 4, "yards": 340, "strokeIndex": 15 },
+        { "number": 7, "par": 3, "yards": 158, "strokeIndex": 11 },
+        { "number": 8, "par": 4, "yards": 440, "strokeIndex": 1 },
+        { "number": 9, "par": 4, "yards": 403, "strokeIndex": 5 },
+        { "number": 10, "par": 5, "yards": 486, "strokeIndex": 8 },
+        { "number": 11, "par": 4, "yards": 347, "strokeIndex": 16 },
+        { "number": 12, "par": 4, "yards": 405, "strokeIndex": 4 },
+        { "number": 13, "par": 3, "yards": 176, "strokeIndex": 10 },
+        { "number": 14, "par": 4, "yards": 350, "strokeIndex": 14 },
+        { "number": 15, "par": 4, "yards": 310, "strokeIndex": 18 },
+        { "number": 16, "par": 3, "yards": 149, "strokeIndex": 12 },
+        { "number": 17, "par": 5, "yards": 517, "strokeIndex": 6 },
+        { "number": 18, "par": 4, "yards": 442, "strokeIndex": 2 }
+      ]
+    },
+    {
+      "id": "oaks",
+      "name": "The Oaks",
+      "tee": "Blue",
+      "rating": 71.9,
+      "slope": 136,
+      "source": "Official Dancing Rabbit Oaks scorecard PDF, Blue tee row.",
+      "holes": [
+        { "number": 1, "par": 4, "yards": 341, "strokeIndex": 14 },
+        { "number": 2, "par": 4, "yards": 442, "strokeIndex": 4 },
+        { "number": 3, "par": 3, "yards": 188, "strokeIndex": 16 },
+        { "number": 4, "par": 5, "yards": 516, "strokeIndex": 10 },
+        { "number": 5, "par": 3, "yards": 172, "strokeIndex": 12 },
+        { "number": 6, "par": 4, "yards": 408, "strokeIndex": 8 },
+        { "number": 7, "par": 4, "yards": 427, "strokeIndex": 2 },
+        { "number": 8, "par": 4, "yards": 304, "strokeIndex": 18 },
+        { "number": 9, "par": 5, "yards": 548, "strokeIndex": 6 },
+        { "number": 10, "par": 4, "yards": 304, "strokeIndex": 17 },
+        { "number": 11, "par": 3, "yards": 188, "strokeIndex": 11 },
+        { "number": 12, "par": 4, "yards": 415, "strokeIndex": 1 },
+        { "number": 13, "par": 4, "yards": 365, "strokeIndex": 9 },
+        { "number": 14, "par": 5, "yards": 535, "strokeIndex": 13 },
+        { "number": 15, "par": 4, "yards": 397, "strokeIndex": 7 },
+        { "number": 16, "par": 5, "yards": 511, "strokeIndex": 3 },
+        { "number": 17, "par": 3, "yards": 155, "strokeIndex": 15 },
+        { "number": 18, "par": 4, "yards": 425, "strokeIndex": 5 }
+      ]
+    }
+  ],
+  "days": [
+    {
+      "id": "thursday",
+      "label": "Thursday",
+      "date": "2026-10-01",
+      "time": "2:30 PM",
+      "courseId": "azaleas",
+      "format": "two-best-net",
+      "stakePerPlayer": 50,
+      "overallEligible": false,
+      "skins": "none",
+      "pairings": [
+        { "id": "thursday-1", "name": "Foursome 1", "playerIds": ["josh-wiles", "david-bosco", "joe-connors", "jonathan-creath"] },
+        { "id": "thursday-2", "name": "Foursome 2", "playerIds": ["ed-buckingham", "taylor-fyfe", "michael-otoole", "tom-triolo"] }
+      ]
+    },
+    {
+      "id": "friday",
+      "label": "Friday",
+      "date": "2026-10-02",
+      "time": "10:00 AM",
+      "courseId": "azaleas",
+      "format": "round-robin-press",
+      "matchStake": 10,
+      "pressStake": 10,
+      "pressTriggerDown": 2,
+      "overallEligible": true,
+      "skins": "none",
+      "pairings": [
+        { "id": "friday-1", "name": "Foursome 1", "playerIds": ["josh-wiles", "david-bosco", "jonathan-creath", "tom-triolo"] },
+        { "id": "friday-2", "name": "Foursome 2", "playerIds": ["ed-buckingham", "joe-connors", "taylor-fyfe", "michael-otoole"] }
+      ],
+      "teams": [
+        { "id": "josh-jonathan", "name": "Josh/Jonathan", "playerIds": ["josh-wiles", "jonathan-creath"], "foursomeId": "friday-1" },
+        { "id": "david-tom", "name": "David/Tom", "playerIds": ["david-bosco", "tom-triolo"], "foursomeId": "friday-1" },
+        { "id": "ed-taylor", "name": "Ed/Taylor", "playerIds": ["ed-buckingham", "taylor-fyfe"], "foursomeId": "friday-2" },
+        { "id": "joe-michael", "name": "Joe/Michael", "playerIds": ["joe-connors", "michael-otoole"], "foursomeId": "friday-2" }
+      ]
+    },
+    {
+      "id": "saturday",
+      "label": "Saturday",
+      "date": "2026-10-03",
+      "time": "10:00 AM",
+      "courseId": "oaks",
+      "format": "abc-best-ball",
+      "abcStakes": { "A": 25, "B": 15, "C": 10 },
+      "overallEligible": true,
+      "skins": "none",
+      "pairings": [
+        { "id": "saturday-1", "name": "Foursome 1", "playerIds": ["josh-wiles", "ed-buckingham", "taylor-fyfe", "tom-triolo"] },
+        { "id": "saturday-2", "name": "Foursome 2", "playerIds": ["david-bosco", "joe-connors", "jonathan-creath", "michael-otoole"] }
+      ]
+    },
+    {
+      "id": "sunday",
+      "label": "Sunday",
+      "date": "2026-10-04",
+      "time": "8:00 AM",
+      "courseId": "azaleas",
+      "format": "gross-and-net",
+      "stakePerPlayer": 50,
+      "overallEligible": true,
+      "skins": "none",
+      "pairings": [
+        { "id": "sunday-1", "name": "Foursome 1", "playerIds": ["josh-wiles", "joe-connors", "michael-otoole", "tom-triolo"] },
+        { "id": "sunday-2", "name": "Foursome 2", "playerIds": ["david-bosco", "ed-buckingham", "jonathan-creath", "taylor-fyfe"] }
+      ]
+    }
+  ],
+  "bounties": [
+    { "id": "net-eagle", "label": "Net eagle or better", "kind": "net", "amountFromEachOtherPlayer": 10 },
+    { "id": "gross-eagle", "label": "Gross eagle or better", "kind": "gross", "amountFromEachOtherPlayer": 20 }
+  ],
+  "verificationNotes": [
+    "Azaleas Blue tee row verified from official PDF: 6,537 yards, par 72, rating/slope 72.1/130.",
+    "Oaks Blue tee row verified from official PDF: 6,641 yards, par 72, rating/slope 71.9/136.",
+    "Azaleas men handicap row is stored as printed per hole: 17,9,3,13,7,15,11,1,5,8,16,4,10,14,18,12,6,2.",
+    "Oaks men handicap row is stored as printed per hole: 14,4,16,10,12,8,2,18,6,17,11,1,9,13,7,3,15,5."
+  ]
+}

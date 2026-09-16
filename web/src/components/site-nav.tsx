@@ -12,6 +12,7 @@ const navItems = [
   { href: "/majors/2026-pga-championship", label: "2026 PGA", state: "live" },
   { href: "/majors/2026-us-open", label: "2026 U.S. Open", state: "live" },
   { href: "/majors/2026-open-championship", label: "2026 Open", state: "live" },
+  { href: "/trips/dancing-rabbit-2026", label: "Dancing Rabbit", state: "live" },
   { href: "/ledger", label: "Ledger", state: "live" },
 ] as const;
 
@@ -26,7 +27,7 @@ export function SiteNav() {
     .sort((left, right) => right.href.length - left.href.length)[0]?.href;
 
   return (
-    <header className="sticky top-0 z-20 border-b border-line bg-background/88 backdrop-blur-md">
+    <header className="sticky top-0 z-20 border-b border-line bg-background/88 backdrop-blur-md print:hidden">
       <div className="mx-auto flex w-full max-w-7xl flex-col gap-4 px-5 py-4 sm:px-8 lg:px-10">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
           <Link href="/" className="flex flex-col">
@@ -48,7 +49,7 @@ export function SiteNav() {
                   href={item.href}
                   className={
                     isActive
-                      ? "rounded-full bg-accent px-4 py-2 text-sm font-semibold text-white"
+                      ? "rounded-full bg-accent px-4 py-2 text-sm font-semibold !text-white"
                       : "rounded-full border border-line bg-card/70 px-4 py-2 text-sm font-semibold text-foreground transition hover:bg-white/60"
                   }
                 >

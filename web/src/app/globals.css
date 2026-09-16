@@ -36,3 +36,80 @@ a {
   color: inherit;
   text-decoration: none;
 }
+
+@media print {
+  @page {
+    size: letter landscape;
+    margin: 0.25in;
+  }
+
+  html,
+  body {
+    background: #ffffff !important;
+  }
+
+  body {
+    color: #151515 !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .scorecard-print-root {
+    background: #ffffff !important;
+    min-height: auto !important;
+  }
+
+  .scorecard-print-stack {
+    display: block !important;
+    max-width: none !important;
+    padding: 0 !important;
+  }
+
+  .scorecard-print-sheet {
+    break-after: page;
+    break-inside: avoid;
+    border: 0 !important;
+    padding: 0 !important;
+    color: #151515 !important;
+    page-break-after: always;
+    page-break-inside: avoid;
+  }
+
+  .scorecard-print-sheet:last-child {
+    break-after: auto;
+    page-break-after: auto;
+  }
+
+  .scorecard-print-sheet table,
+  .scorecard-print-sheet tr,
+  .scorecard-print-sheet td,
+  .scorecard-print-sheet th {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  .scorecard-print-sheet table {
+    font-size: 9.5px !important;
+  }
+
+  .scorecard-print-sheet h2 {
+    font-size: 28px !important;
+    line-height: 1.1 !important;
+  }
+
+  .scorecard-print-sheet h3,
+  .scorecard-print-sheet p,
+  .scorecard-print-sheet div {
+    line-height: 1.25 !important;
+  }
+
+  .scorecard-print-details {
+    margin-top: 0 !important;
+    gap: 8px !important;
+  }
+
+  .scorecard-print-details section {
+    min-height: 0;
+    padding: 0 !important;
+  }
+}
