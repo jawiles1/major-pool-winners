@@ -33,3 +33,18 @@ model DancingRabbitHandicapOverride {
   @@index([dayId])
   @@index([playerId])
 }
+
+model DancingRabbitPayment {
+  id             String   @id @default(cuid())
+  dayId          String
+  fromPlayerId   String
+  toPlayerId     String
+  amount         Float
+  calculationKey String
+  paidAt         DateTime @default(now())
+  createdAt      DateTime @default(now())
+
+  @@index([dayId])
+  @@index([fromPlayerId])
+  @@index([toPlayerId])
+}

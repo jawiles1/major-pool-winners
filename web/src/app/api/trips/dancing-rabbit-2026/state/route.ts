@@ -4,18 +4,17 @@ import {
   createEmptyHandicapOverrideState,
   createEmptyScoreState,
   type DayId,
-  type HandicapOverrideState,
   type PlayerId,
-  type ScoreState,
 } from "@/lib/dancing-rabbit";
 import { prisma } from "@/lib/prisma";
 
 export const dynamic = "force-dynamic";
 
 export async function GET() {
-  const [scoreRows, handicapRows] = await Promise.all([
+  const [scoreRows, handicapRows, paymentRows] = await Promise.all([
     prisma.dancingRabbitScore.findMany(),
     prisma.dancingRabbitHandicapOverride.findMany(),
+    prisma.dancingRabbitPayment.findMany({ orderBy: { paidAt: "asc" } }),
   ]);
   const scores = createEmptyScoreState();
   const handicapOverrides = createEmptyHandicapOverrideState();
@@ -47,10 +46,10 @@ export async function GET() {
   return NextResponse.json({
     scores,
     handicapOverrides,
+    payments: paymentRows.map((payment) => ({
+      ...payment,
+      paidAt: payment.paidAt.toISOString(),
+    })),
     updatedAt,
-  } satisfies {
-    scores: ScoreState;
-    handicapOverrides: HandicapOverrideState;
-    updatedAt: number;
   });
 }

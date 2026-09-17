@@ -98,10 +98,21 @@ export type PlayerHoleScore = {
 };
 
 export type MoneyLine = {
+  dayId: DayId;
   from: PlayerId;
   to: PlayerId;
   amount: number;
   note: string;
+};
+
+export type RecordedPayment = {
+  id: string;
+  dayId: DayId;
+  fromPlayerId: PlayerId;
+  toPlayerId: PlayerId;
+  amount: number;
+  calculationKey: string;
+  paidAt: string;
 };
 
 export type BountyResult = {
@@ -155,11 +166,25 @@ export type SettlementTransfer = {
   amount: number;
 };
 
+export type DaySettlement = {
+  day: TripDay;
+  complete: boolean;
+  calculationKey: string;
+  calculatedTransfers: SettlementTransfer[];
+  remainingTransfers: SettlementTransfer[];
+  payments: RecordedPayment[];
+  totalPaid: number;
+  settled: boolean;
+  needsReconciliation: boolean;
+};
+
 export type TripCalculations = {
   dayResults: DailyResult[];
   bounties: BountyResult[];
   overallRows: OverallRow[];
   settlement: SettlementTransfer[];
+  daySettlements: DaySettlement[];
+  overallComplete: boolean;
   moneyLines: MoneyLine[];
 };
 
@@ -199,7 +224,7 @@ export function formatMoney(amount: number): string {
   return new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: "USD",
-    maximumFractionDigits: 0,
+    maximumFractionDigits: 2,
   }).format(amount);
 }
 
@@ -313,12 +338,13 @@ function withPlayerAmount(
 function addTransfer(
   moneyLines: MoneyLine[],
   playerNet: Record<PlayerId, number>,
+  dayId: DayId,
   from: PlayerId,
   to: PlayerId,
   amount: number,
   note: string,
 ) {
-  moneyLines.push({ from, to, amount, note });
+  moneyLines.push({ dayId, from, to, amount, note });
   withPlayerAmount(playerNet, from, -amount);
   withPlayerAmount(playerNet, to, amount);
 }
@@ -335,7 +361,15 @@ function splitPairingStake(
 
   for (const from of loser.playerIds) {
     for (const to of winner.playerIds) {
-      addTransfer(moneyLines, playerNet, from, to, stake / winner.playerIds.length, note);
+      addTransfer(
+        moneyLines,
+        playerNet,
+        day.id,
+        from,
+        to,
+        stake / winner.playerIds.length,
+        note,
+      );
     }
   }
 
@@ -511,6 +545,7 @@ function calculateFriday(day: TripDay, scores: ScoreState, overrides?: HandicapO
           addTransfer(
             moneyLines,
             playerNet,
+            day.id,
             from,
             to,
             segment.amount / winner.playerIds.length,
@@ -820,6 +855,7 @@ export function calculateBounties(
           addTransfer(
             moneyLines,
             playerNet,
+            day.id,
             payer.id,
             player.id,
             bounty.amountFromEachOtherPlayer,
@@ -922,29 +958,109 @@ function minimizeTransfers(balances: Record<PlayerId, number>): SettlementTransf
   return transfers;
 }
 
-export function calculateTrip(
-  scores: ScoreState,
-  overrides?: HandicapOverrideState,
-): TripCalculations {
-  const dayResults = dancingRabbitTrip.days.map((day) => calculateDay(day, scores, overrides));
-  const bountyResult = calculateBounties(scores, overrides);
-  const overallPayouts = calculateOverallPayouts(dayResults);
-  const moneyLines = [
-    ...dayResults.flatMap((result) => result.moneyLines),
-    ...bountyResult.moneyLines,
-  ];
-  const balances = Object.fromEntries(
-    dancingRabbitTrip.players.map((player) => [player.id, -dancingRabbitTrip.overallBuyIn]),
+function createPlayerBalances(): Record<PlayerId, number> {
+  return Object.fromEntries(
+    dancingRabbitTrip.players.map((player) => [player.id, 0]),
   ) as Record<PlayerId, number>;
+}
 
+function applyMoneyLines(
+  balances: Record<PlayerId, number>,
+  moneyLines: MoneyLine[],
+) {
   for (const line of moneyLines) {
     balances[line.from] -= line.amount;
     balances[line.to] += line.amount;
   }
+}
 
-  for (const [playerId, amount] of Object.entries(overallPayouts)) {
-    balances[playerId] += amount;
+function applyPayments(
+  balances: Record<PlayerId, number>,
+  payments: RecordedPayment[],
+) {
+  for (const payment of payments) {
+    balances[payment.fromPlayerId] += payment.amount;
+    balances[payment.toPlayerId] -= payment.amount;
   }
+}
+
+function getCalculationKey(moneyLines: MoneyLine[]): string {
+  return JSON.stringify(
+    moneyLines
+      .map((line) => ({
+        from: line.from,
+        to: line.to,
+        amount: Number(line.amount.toFixed(4)),
+        note: line.note,
+      }))
+      .sort((left, right) =>
+        `${left.from}|${left.to}|${left.amount}|${left.note}`.localeCompare(
+          `${right.from}|${right.to}|${right.amount}|${right.note}`,
+        ),
+      ),
+  );
+}
+
+export function calculateTrip(
+  scores: ScoreState,
+  overrides?: HandicapOverrideState,
+  payments: RecordedPayment[] = [],
+): TripCalculations {
+  const dayResults = dancingRabbitTrip.days.map((day) => calculateDay(day, scores, overrides));
+  const bountyResult = calculateBounties(scores, overrides);
+  const overallPayouts = calculateOverallPayouts(dayResults);
+  const completeDayIds = new Set(
+    dayResults.filter((result) => result.complete).map((result) => result.day.id),
+  );
+  const moneyLines = [
+    ...dayResults.filter((result) => result.complete).flatMap((result) => result.moneyLines),
+    ...bountyResult.moneyLines.filter((line) => completeDayIds.has(line.dayId)),
+  ];
+  const overallComplete = dayResults
+    .filter((result) => result.day.overallEligible)
+    .every((result) => result.complete);
+  const balances = createPlayerBalances();
+
+  applyMoneyLines(balances, moneyLines);
+  applyPayments(balances, payments);
+
+  if (overallComplete) {
+    for (const player of dancingRabbitTrip.players) {
+      balances[player.id] -= dancingRabbitTrip.overallBuyIn;
+      balances[player.id] += overallPayouts[player.id];
+    }
+  }
+
+  const daySettlements = dancingRabbitTrip.days.map((day): DaySettlement => {
+    const result = dayResults.find((entry) => entry.day.id === day.id)!;
+    const dayMoneyLines = result.complete
+      ? moneyLines.filter((line) => line.dayId === day.id)
+      : [];
+    const dayPayments = payments.filter((payment) => payment.dayId === day.id);
+    const calculationKey = getCalculationKey(dayMoneyLines);
+    const calculatedBalances = createPlayerBalances();
+    const remainingBalances = createPlayerBalances();
+
+    applyMoneyLines(calculatedBalances, dayMoneyLines);
+    applyMoneyLines(remainingBalances, dayMoneyLines);
+    applyPayments(remainingBalances, dayPayments);
+
+    const remainingTransfers = minimizeTransfers(remainingBalances);
+
+    return {
+      day,
+      complete: result.complete,
+      calculationKey,
+      calculatedTransfers: minimizeTransfers(calculatedBalances),
+      remainingTransfers,
+      payments: dayPayments,
+      totalPaid: dayPayments.reduce((sum, payment) => sum + payment.amount, 0),
+      settled: result.complete && remainingTransfers.length === 0,
+      needsReconciliation: dayPayments.some(
+        (payment) => payment.calculationKey !== calculationKey,
+      ),
+    };
+  });
 
   const overallRows = dancingRabbitTrip.players
     .map((player) => {
@@ -961,17 +1077,27 @@ export function calculateTrip(
       }, 0);
 
       const grossMoney = dayResults.reduce(
-        (sum, result) => sum + (result.playerNet[player.id] ?? 0),
+        (sum, result) => sum + (result.complete ? (result.playerNet[player.id] ?? 0) : 0),
         0,
       );
-      const bountyMoney = bountyResult.playerNet[player.id] ?? 0;
+      const bountyMoney = moneyLines.reduce((sum, line) => {
+        if (!line.note.toLowerCase().includes("eagle")) {
+          return sum;
+        }
+
+        if (line.from === player.id) {
+          return sum - line.amount;
+        }
+
+        return line.to === player.id ? sum + line.amount : sum;
+      }, 0);
 
       return {
         player,
         points,
         grossMoney,
         bountyMoney,
-        overallPayout: overallPayouts[player.id],
+        overallPayout: overallComplete ? overallPayouts[player.id] : 0,
         net: balances[player.id],
       };
     })
@@ -982,6 +1108,8 @@ export function calculateTrip(
     bounties: bountyResult.bounties,
     overallRows,
     settlement: minimizeTransfers(balances),
+    daySettlements,
+    overallComplete,
     moneyLines,
   };
 }

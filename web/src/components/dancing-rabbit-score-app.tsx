@@ -13,14 +13,18 @@ import {
   getPlayer,
   getPlayerDayHandicap,
   getPlayerHoleScore,
+  type DaySettlement,
   type DayId,
+  type RecordedPayment,
   type ScoreState,
+  type SettlementTransfer,
 } from "@/lib/dancing-rabbit";
 import { useHandicapOverrides } from "@/lib/dancing-rabbit-handicap-overrides";
 
 const storageKey = "dancing-rabbit-2026-scores";
 const stateEndpoint = "/api/trips/dancing-rabbit-2026/state";
 const scoresEndpoint = "/api/trips/dancing-rabbit-2026/scores";
+const paymentsEndpoint = "/api/trips/dancing-rabbit-2026/payments";
 
 function loadInitialScores(): ScoreState {
   if (typeof window === "undefined") {
@@ -44,10 +48,13 @@ export function DancingRabbitScoreApp() {
   const [activeDayId, setActiveDayId] = useState<DayId>("thursday");
   const [activeHoleNumber, setActiveHoleNumber] = useState(1);
   const [scores, setScores] = useState<ScoreState>(() => loadInitialScores());
+  const [payments, setPayments] = useState<RecordedPayment[]>([]);
+  const [paymentAction, setPaymentAction] = useState<string>();
+  const [paymentError, setPaymentError] = useState<string>();
   const [handicapOverrides] = useHandicapOverrides();
   const calculations = useMemo(
-    () => calculateTrip(scores, handicapOverrides),
-    [scores, handicapOverrides],
+    () => calculateTrip(scores, handicapOverrides, payments),
+    [scores, handicapOverrides, payments],
   );
   const activeDay = getDay(activeDayId);
   const activeCourse = getCourse(activeDay.courseId);
@@ -71,8 +78,12 @@ export function DancingRabbitScoreApp() {
           return;
         }
 
-        const data = (await response.json()) as { scores?: ScoreState };
+        const data = (await response.json()) as {
+          scores?: ScoreState;
+          payments?: RecordedPayment[];
+        };
         setScores({ ...createEmptyScoreState(), ...data.scores });
+        setPayments(data.payments ?? []);
       } catch {
         // Keep the optimistic local state if the network is temporarily unavailable.
       }
@@ -124,6 +135,68 @@ export function DancingRabbitScoreApp() {
     }).catch(() => {
       // Keep the local clear visible; polling will reconcile when connectivity returns.
     });
+  }
+
+  async function recordPayments(
+    settlement: DaySettlement,
+    transfers: SettlementTransfer[],
+  ) {
+    if (!transfers.length) {
+      return;
+    }
+
+    setPaymentAction(settlement.day.id);
+    setPaymentError(undefined);
+
+    try {
+      const response = await fetch(paymentsEndpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          payments: transfers.map((transfer) => ({
+            dayId: settlement.day.id,
+            fromPlayerId: transfer.from.id,
+            toPlayerId: transfer.to.id,
+            amount: transfer.amount,
+            calculationKey: settlement.calculationKey,
+          })),
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("The payment could not be saved.");
+      }
+
+      const data = (await response.json()) as { payments?: RecordedPayment[] };
+      setPayments((current) => [...current, ...(data.payments ?? [])]);
+    } catch (error) {
+      setPaymentError(error instanceof Error ? error.message : "The payment could not be saved.");
+    } finally {
+      setPaymentAction(undefined);
+    }
+  }
+
+  async function undoPayment(payment: RecordedPayment) {
+    setPaymentAction(payment.id);
+    setPaymentError(undefined);
+
+    try {
+      const response = await fetch(paymentsEndpoint, {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ paymentId: payment.id }),
+      });
+
+      if (!response.ok) {
+        throw new Error("The payment could not be removed.");
+      }
+
+      setPayments((current) => current.filter((item) => item.id !== payment.id));
+    } catch (error) {
+      setPaymentError(error instanceof Error ? error.message : "The payment could not be removed.");
+    } finally {
+      setPaymentAction(undefined);
+    }
   }
 
   return (
@@ -407,8 +480,8 @@ export function DancingRabbitScoreApp() {
             ))}
           </div>
           <p className="mt-3 text-xs leading-5 text-muted">
-            Net includes the {formatMoney(dancingRabbitTrip.overallBuyIn)} overall
-            buy-in and configured overall payouts.
+            Net includes completed daily games and bounties. The {formatMoney(dancingRabbitTrip.overallBuyIn)} overall
+            buy-in and final payouts are {calculations.overallComplete ? "now included" : "held until every overall round is complete"}.
           </p>
         </article>
 
@@ -437,20 +510,130 @@ export function DancingRabbitScoreApp() {
               </div>
             </div>
             <div>
-              <h3 className="font-semibold">Minimum Transfers</h3>
-              <div className="mt-2 grid gap-2 text-sm">
-                {calculations.settlement.length ? (
-                  calculations.settlement.map((transfer) => (
-                    <div key={`${transfer.from.id}-${transfer.to.id}-${transfer.amount}`} className="rounded-[0.75rem] border border-line bg-background/70 p-3">
-                      <span className="font-semibold">{transfer.from.shortName}</span>
-                      <span> pays </span>
-                      <span className="font-semibold">{transfer.to.shortName}</span>
-                      <span>: {formatMoney(transfer.amount)}</span>
+              <h3 className="font-semibold">Daily Settlements</h3>
+              {paymentError ? (
+                <p className="mt-2 rounded-[0.75rem] border border-red-300 bg-red-50 p-3 text-sm text-red-800">
+                  {paymentError}
+                </p>
+              ) : null}
+              <div className="mt-2 grid gap-3 text-sm">
+                {calculations.daySettlements.map((settlement) => (
+                  <div
+                    key={settlement.day.id}
+                    className="rounded-[0.9rem] border border-line bg-background/70 p-3"
+                  >
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                      <div>
+                        <p className="font-semibold">{settlement.day.label}</p>
+                        <p className="text-xs text-muted">
+                          {settlement.complete
+                            ? settlement.settled
+                              ? "Settled"
+                              : `${settlement.remainingTransfers.length} payment${settlement.remainingTransfers.length === 1 ? "" : "s"} remaining`
+                            : "Finish all scores before settling"}
+                          {settlement.totalPaid > 0
+                            ? ` · ${formatMoney(settlement.totalPaid)} recorded paid`
+                            : ""}
+                        </p>
+                      </div>
+                      {settlement.complete && settlement.remainingTransfers.length > 1 ? (
+                        <button
+                          type="button"
+                          onClick={() => recordPayments(settlement, settlement.remainingTransfers)}
+                          disabled={paymentAction === settlement.day.id}
+                          className="rounded-full bg-accent px-3 py-1.5 text-xs font-semibold !text-white disabled:cursor-not-allowed disabled:opacity-50"
+                        >
+                          {paymentAction === settlement.day.id ? "Saving…" : "Mark day settled"}
+                        </button>
+                      ) : null}
                     </div>
-                  ))
-                ) : (
-                  <p className="text-muted">No settlement transfers yet.</p>
-                )}
+
+                    {settlement.needsReconciliation ? (
+                      <p className="mt-3 rounded-[0.65rem] border border-amber-300 bg-amber-50 p-2 text-xs leading-5 text-amber-900">
+                        Scores changed after a payment was recorded. The transfers below reconcile the updated result with money already paid.
+                      </p>
+                    ) : null}
+
+                    {settlement.complete && settlement.remainingTransfers.length ? (
+                      <div className="mt-3 grid gap-2">
+                        {settlement.remainingTransfers.map((transfer) => (
+                          <div
+                            key={`${transfer.from.id}-${transfer.to.id}-${transfer.amount}`}
+                            className="flex flex-wrap items-center justify-between gap-2 rounded-[0.65rem] border border-line bg-card p-2"
+                          >
+                            <p>
+                              <span className="font-semibold">{transfer.from.shortName}</span>
+                              <span> pays </span>
+                              <span className="font-semibold">{transfer.to.shortName}</span>
+                              <span>: {formatMoney(transfer.amount)}</span>
+                            </p>
+                            <button
+                              type="button"
+                              onClick={() => recordPayments(settlement, [transfer])}
+                              disabled={paymentAction === settlement.day.id}
+                              className="rounded-full border border-line bg-background px-3 py-1 text-xs font-semibold disabled:cursor-not-allowed disabled:opacity-50"
+                            >
+                              Mark paid
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    ) : settlement.settled ? (
+                      <p className="mt-3 text-xs font-semibold text-accent">
+                        {settlement.calculatedTransfers.length ? "All payments recorded." : "No payments due."}
+                      </p>
+                    ) : null}
+
+                    {settlement.payments.length ? (
+                      <details className="mt-3">
+                        <summary className="cursor-pointer text-xs font-semibold text-muted">
+                          Payment history ({settlement.payments.length})
+                        </summary>
+                        <div className="mt-2 grid gap-2">
+                          {settlement.payments.map((payment) => (
+                            <div
+                              key={payment.id}
+                              className="flex flex-wrap items-center justify-between gap-2 text-xs"
+                            >
+                              <span>
+                                {getPlayer(payment.fromPlayerId).shortName} paid {getPlayer(payment.toPlayerId).shortName} {formatMoney(payment.amount)}
+                              </span>
+                              <button
+                                type="button"
+                                onClick={() => undoPayment(payment)}
+                                disabled={paymentAction === payment.id}
+                                className="font-semibold text-muted underline underline-offset-2 disabled:opacity-50"
+                              >
+                                Undo
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      </details>
+                    ) : null}
+                  </div>
+                ))}
+              </div>
+
+              <div className="mt-4 border-t border-line pt-4">
+                <h3 className="font-semibold">Total Remaining</h3>
+                <p className="mt-1 text-xs leading-5 text-muted">
+                  This nets every unpaid completed day together{calculations.overallComplete ? ", including the final overall pot." : ". The overall pot is not due yet."}
+                </p>
+                <div className="mt-2 grid gap-2">
+                  {calculations.settlement.length ? (
+                    calculations.settlement.map((transfer) => (
+                      <div key={`${transfer.from.id}-${transfer.to.id}-${transfer.amount}`} className="rounded-[0.65rem] border border-line bg-card p-2">
+                        <span className="font-semibold">{transfer.from.shortName}</span>
+                        <span> pays </span>
+                        <span className="font-semibold">{transfer.to.shortName}</span>
+                        <span>: {formatMoney(transfer.amount)}</span>
+                      </div>
+                    ))
+                  ) : (
+                    <p className="text-muted">Nothing currently owed.</p>
+                  )}
+                </div>
               </div>
             </div>
           </div>
