@@ -128,12 +128,8 @@ export function DancingRabbitMobileScoreApp() {
   return (
     <div className="mx-auto grid w-full max-w-md gap-4">
       <section className="rounded-[1.25rem] border border-line bg-card/95 p-4">
-        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-accent">
-          Phone Scoring
-        </p>
-        <h2 className="mt-1 text-2xl font-semibold">{activeDay.label}</h2>
-
-        <div className="mt-4 grid grid-cols-2 gap-2">
+        <h2 className="sr-only">{activeDay.label} scoring</h2>
+        <div className="grid grid-cols-4 gap-1">
           {dancingRabbitTrip.days.map((day) => (
             <button
               key={day.id}
@@ -150,7 +146,7 @@ export function DancingRabbitMobileScoreApp() {
           ))}
         </div>
 
-        <label className="mt-4 block">
+        <label className="mt-3 block">
           <span className="text-xs font-semibold uppercase tracking-[0.14em] text-muted">
             Group
           </span>

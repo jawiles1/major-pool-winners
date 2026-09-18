@@ -18,6 +18,10 @@ const navItems = [
 
 export function SiteNav() {
   const pathname = usePathname();
+  if (pathname === "/trips/dancing-rabbit-2026/score/mobile") {
+    return null;
+  }
+
   const activeHref = navItems
     .filter((item) =>
       item.href === "/"
