@@ -1019,13 +1019,17 @@ export function calculateTrip(
   const overallComplete = dayResults
     .filter((result) => result.day.overallEligible)
     .every((result) => result.complete);
+  const earnedBalances = createPlayerBalances();
   const balances = createPlayerBalances();
 
+  applyMoneyLines(earnedBalances, moneyLines);
   applyMoneyLines(balances, moneyLines);
   applyPayments(balances, payments);
 
   if (overallComplete) {
     for (const player of dancingRabbitTrip.players) {
+      earnedBalances[player.id] -= dancingRabbitTrip.overallBuyIn;
+      earnedBalances[player.id] += overallPayouts[player.id];
       balances[player.id] -= dancingRabbitTrip.overallBuyIn;
       balances[player.id] += overallPayouts[player.id];
     }
@@ -1098,7 +1102,7 @@ export function calculateTrip(
         grossMoney,
         bountyMoney,
         overallPayout: overallComplete ? overallPayouts[player.id] : 0,
-        net: balances[player.id],
+        net: earnedBalances[player.id],
       };
     })
     .sort((left, right) => right.points - left.points || right.net - left.net);

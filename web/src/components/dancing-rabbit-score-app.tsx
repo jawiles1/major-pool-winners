@@ -480,7 +480,7 @@ export function DancingRabbitScoreApp() {
             ))}
           </div>
           <p className="mt-3 text-xs leading-5 text-muted">
-            Net includes completed daily games and bounties. The {formatMoney(dancingRabbitTrip.overallBuyIn)} overall
+            Points and net track completed golf results and do not reset when payments are recorded. Net includes completed daily games and bounties. The {formatMoney(dancingRabbitTrip.overallBuyIn)} overall
             buy-in and final payouts are {calculations.overallComplete ? "now included" : "held until every overall round is complete"}.
           </p>
         </article>

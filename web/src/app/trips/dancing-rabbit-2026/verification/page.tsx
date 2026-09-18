@@ -69,7 +69,7 @@ export default function DancingRabbitVerificationPage() {
     {
       label: "Overall points",
       status: true,
-      note: "Thursday is excluded; Friday uses combined team net by foursome; ties award 0.5 points.",
+      note: "Each completed day awards an overall point; Friday uses combined team net by foursome, and ties award 0.5 points.",
     },
     {
       label: "Bounty precedence",

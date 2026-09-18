@@ -81,7 +81,7 @@
       "courseId": "azaleas",
       "format": "two-best-net",
       "stakePerPlayer": 50,
-      "overallEligible": false,
+      "overallEligible": true,
       "skins": "none",
       "pairings": [
         { "id": "thursday-1", "name": "Foursome 1", "playerIds": ["josh-wiles", "david-bosco", "joe-connors", "jonathan-creath"] },
