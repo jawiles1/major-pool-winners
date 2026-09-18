@@ -20,6 +20,7 @@ import {
   type SettlementTransfer,
 } from "@/lib/dancing-rabbit";
 import { useHandicapOverrides } from "@/lib/dancing-rabbit-handicap-overrides";
+import { DancingRabbitDailyScorecards } from "@/components/dancing-rabbit-daily-scorecards";
 
 const storageKey = "dancing-rabbit-2026-scores";
 const stateEndpoint = "/api/trips/dancing-rabbit-2026/state";
@@ -450,6 +451,8 @@ export function DancingRabbitScoreApp() {
           ) : null}
         </aside>
       </section>
+
+      <DancingRabbitDailyScorecards day={activeDay} scores={scores} />
 
       <section className="grid gap-4 xl:grid-cols-[0.95fr_1.05fr]">
         <article className="rounded-[1.5rem] border border-line bg-card/90 p-5">

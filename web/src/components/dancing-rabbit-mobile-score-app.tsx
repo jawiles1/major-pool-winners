@@ -17,6 +17,7 @@ import {
   type ScoreState,
 } from "@/lib/dancing-rabbit";
 import { useHandicapOverrides } from "@/lib/dancing-rabbit-handicap-overrides";
+import { DancingRabbitDailyScorecards } from "@/components/dancing-rabbit-daily-scorecards";
 
 const storageKey = "dancing-rabbit-2026-scores";
 const stateEndpoint = "/api/trips/dancing-rabbit-2026/state";
@@ -166,6 +167,7 @@ export function DancingRabbitMobileScoreApp() {
             ))}
           </select>
         </label>
+        <a href="#daily-scorecards" className="mt-3 inline-block text-sm font-semibold text-accent underline underline-offset-4">Daily totals &amp; scorecards</a>
       </section>
 
       <section className="rounded-[1.25rem] border border-line bg-card/95 p-4">
@@ -273,6 +275,8 @@ export function DancingRabbitMobileScoreApp() {
           </button>
         </div>
       </section>
+
+      <DancingRabbitDailyScorecards day={activeDay} scores={scores} />
 
       <section className="rounded-[1.25rem] border border-line bg-card/95 p-4">
         <p className="text-xs font-semibold uppercase tracking-[0.18em] text-accent">
