@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { DancingRabbitOverall } from "@/components/dancing-rabbit-overall";
 import { DancingRabbitPlayerHandicaps } from "@/components/dancing-rabbit-player-handicaps";
 
 import {
@@ -26,6 +27,7 @@ export default function DancingRabbitTripPage() {
                 balls, bounties, overall points, and settlement.
               </p>
               <div className="mt-7 flex flex-wrap gap-3">
+                <Link href="#overall-game" className="rounded-full border border-white/24 bg-white/8 px-5 py-3 text-sm font-semibold !text-white transition hover:bg-white/14">Overall game</Link>
                 <Link
                   href="/trips/dancing-rabbit-2026/score"
                   className="rounded-full border border-white/24 bg-white/8 px-5 py-3 text-sm font-semibold !text-white transition hover:bg-white/14"
@@ -85,6 +87,8 @@ export default function DancingRabbitTripPage() {
             </div>
           </div>
         </header>
+
+        <DancingRabbitOverall />
 
         <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
           {dancingRabbitTrip.days.map((day) => {
