@@ -21,6 +21,7 @@ import { useCurrentTripDay } from "@/lib/use-current-trip-day";
 import { useHandicapOverrides } from "@/lib/dancing-rabbit-handicap-overrides";
 import { DancingRabbitDailyScorecards } from "@/components/dancing-rabbit-daily-scorecards";
 import { DancingRabbitAbcResults } from "@/components/dancing-rabbit-abc-results";
+import { DancingRabbitSundayResults } from "@/components/dancing-rabbit-sunday-results";
 
 const paymentsEndpoint = "/api/trips/dancing-rabbit-2026/payments";
 
@@ -383,6 +384,7 @@ export function DancingRabbitScoreApp() {
       </section>
 
       {activeResult && <DancingRabbitAbcResults result={activeResult} />}
+      {activeResult && <DancingRabbitSundayResults result={activeResult} />}
       <DancingRabbitDailyScorecards day={activeDay} scores={scores} />
 
       <section className="grid gap-4 xl:grid-cols-[0.95fr_1.05fr]">
