@@ -15,12 +15,13 @@ import {
   type DayId,
 } from "@/lib/dancing-rabbit";
 import { useTripScoreSync } from "@/lib/use-trip-score-sync";
+import { useCurrentTripDay } from "@/lib/use-current-trip-day";
 import { useHandicapOverrides } from "@/lib/dancing-rabbit-handicap-overrides";
 import { DancingRabbitDailyScorecards } from "@/components/dancing-rabbit-daily-scorecards";
 
 export function DancingRabbitMobileScoreApp() {
-  const [activeDayId, setActiveDayId] = useState<DayId>("thursday");
-  const [activePairingId, setActivePairingId] = useState("thursday-1");
+  const [activeDayId, setActiveDayId] = useCurrentTripDay();
+  const [activePairingId, setActivePairingId] = useState("");
   const [activeHoleNumber, setActiveHoleNumber] = useState(1);
   const sync = useTripScoreSync();
   const { scores } = sync;

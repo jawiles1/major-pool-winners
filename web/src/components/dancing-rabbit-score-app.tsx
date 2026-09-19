@@ -13,18 +13,18 @@ import {
   getPlayerDayHandicap,
   getPlayerHoleScore,
   type DaySettlement,
-  type DayId,
   type RecordedPayment,
   type SettlementTransfer,
 } from "@/lib/dancing-rabbit";
 import { useTripScoreSync } from "@/lib/use-trip-score-sync";
+import { useCurrentTripDay } from "@/lib/use-current-trip-day";
 import { useHandicapOverrides } from "@/lib/dancing-rabbit-handicap-overrides";
 import { DancingRabbitDailyScorecards } from "@/components/dancing-rabbit-daily-scorecards";
 
 const paymentsEndpoint = "/api/trips/dancing-rabbit-2026/payments";
 
 export function DancingRabbitScoreApp() {
-  const [activeDayId, setActiveDayId] = useState<DayId>("thursday");
+  const [activeDayId, setActiveDayId] = useCurrentTripDay();
   const [activeHoleNumber, setActiveHoleNumber] = useState(1);
   const sync = useTripScoreSync();
   const { scores } = sync;
