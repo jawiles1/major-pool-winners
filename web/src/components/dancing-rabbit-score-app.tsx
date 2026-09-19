@@ -31,6 +31,8 @@ export function DancingRabbitScoreApp() {
   const { payments, setPayments } = sync;
   const [paymentAction, setPaymentAction] = useState<string>();
   const [paymentError, setPaymentError] = useState<string>();
+  const [clearError, setClearError] = useState<string>();
+  const [clearing, setClearing] = useState(false);
   const [handicapOverrides] = useHandicapOverrides();
   const calculations = useMemo(
     () => calculateTrip(scores, handicapOverrides, payments),
@@ -46,7 +48,13 @@ export function DancingRabbitScoreApp() {
   );
 
   function updateScore(playerId: string, holeNumber: number, value: string) { sync.updateScore(activeDayId, playerId, holeNumber, value); }
-  function clearDay() { sync.clearDay(activeDayId); }
+  async function clearDay(password?: string) {
+    setClearError(undefined);
+    setClearing(true);
+    try { await sync.clearDay(activeDayId, password); }
+    catch (error) { setClearError(error instanceof Error ? error.message : "Scores could not be cleared."); }
+    finally { setClearing(false); }
+  }
 
   async function recordPayments(
     settlement: DaySettlement,
@@ -125,12 +133,21 @@ export function DancingRabbitScoreApp() {
           </div>
           <button
             type="button"
-            onClick={clearDay}
+            onClick={() => clearDay()}
+            disabled={clearing}
             className="w-full rounded-full border border-line bg-background px-4 py-2 text-sm font-semibold sm:w-auto"
           >
             Clear {activeDay.label}
           </button>
         </div>
+
+        {clearError && <div role="alert" className="mt-3 rounded-xl border border-red-300 bg-red-50 p-3 text-sm text-red-900">
+          <p>{clearError}</p>
+          {clearError.includes("administrator") && <button type="button" disabled={clearing} className="mt-2 font-semibold underline" onClick={() => {
+            const password = window.prompt(`Administrator password to clear ${activeDay.label}. Payment history will remain recorded.`);
+            if (password && window.confirm(`Clear all scores for ${activeDay.label} as administrator?`)) void clearDay(password);
+          }}>Clear as administrator</button>}
+        </div>}
 
         <div className="mt-4 flex gap-2 overflow-x-auto pb-1">
           {dancingRabbitTrip.days.map((day) => (
@@ -140,6 +157,7 @@ export function DancingRabbitScoreApp() {
               onClick={() => {
                 setActiveDayId(day.id);
                 setActiveHoleNumber(1);
+                setClearError(undefined);
               }}
               className={
                 day.id === activeDayId

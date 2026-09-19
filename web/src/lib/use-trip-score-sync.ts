@@ -24,6 +24,7 @@ export function useTripScoreSync() {
   const ready = useRef(false);
   const retry = useRef<() => void>(() => {});
   const storageFailed = useRef(false);
+  const clearing = useRef(false);
 
   function persistQueue() {
     try { localStorage.setItem(queueKey, JSON.stringify(queue.current)); storageFailed.current = false; }
@@ -40,7 +41,8 @@ export function useTripScoreSync() {
         localStorage.setItem(`${scoreKey}-recovery-backup`, cached);
       }
       const pending = localStorage.getItem(queueKey);
-      queue.current = pending ? JSON.parse(pending) : [];
+      // Never replay a destructive clear automatically after reconnecting.
+      queue.current = pending ? (JSON.parse(pending) as Edit[]).filter(edit => edit.playerId) : [];
       const initial = cached ? { ...createEmptyScoreState(), ...JSON.parse(cached) } : createEmptyScoreState();
       setScores(queue.current.reduce(applyScoreEdit, initial));
     } catch { storageFailed.current = true; }
@@ -48,7 +50,7 @@ export function useTripScoreSync() {
     setInitialized(true);
 
     async function sync() {
-      if (busy || stopped || document.hidden) return;
+      if (busy || stopped || clearing.current || document.hidden) return;
       busy = true;
       clearTimeout(timer);
       try {
@@ -73,7 +75,7 @@ export function useTripScoreSync() {
         if (!response.ok) throw new Error(`Refresh failed (${response.status})`);
         const data = await response.json();
         if (!data.scores) throw new Error("Missing shared scores");
-        if (!stopped && startedAt === revision.current) {
+        if (!stopped && !clearing.current && startedAt === revision.current) {
           setScores(queue.current.reduce(applyScoreEdit, { ...createEmptyScoreState(), ...data.scores }));
           setPayments(data.payments ?? []);
           setMessage(queue.current.length ? "Changes waiting to save…" : "Shared scores up to date");
@@ -105,7 +107,7 @@ export function useTripScoreSync() {
   }, [scores, initialized]);
 
   function enqueue(edit: Omit<Edit, "id">) {
-    if (!ready.current) return;
+    if (!ready.current || clearing.current) return;
     const operation = { ...edit, id: crypto.randomUUID() };
     queue.current.push(operation);
     revision.current += 1;
@@ -120,6 +122,20 @@ export function useTripScoreSync() {
       const parsed = Number(value);
       enqueue({ dayId, playerId, holeNumber, gross: Number.isFinite(parsed) && parsed > 0 ? parsed : 0 });
     },
-    clearDay: (dayId: DayId) => enqueue({ dayId }),
+    clearDay: async (dayId: DayId, password?: string) => {
+      if (clearing.current || queue.current.length) throw new Error("Wait for pending scores to finish saving before clearing.");
+      clearing.current = true;
+      revision.current += 1;
+      try {
+        const response = await fetch("/api/trips/dancing-rabbit-2026/scores", {
+          method: "DELETE", headers: { "Content-Type": "application/json", ...(password ? { "x-admin-password": password } : {}) },
+          body: JSON.stringify({ dayId }), signal: AbortSignal.timeout(15000),
+        });
+        const result = await response.json();
+        if (!response.ok) throw new Error(result.error ?? "Scores could not be cleared.");
+        setScores(current => applyScoreEdit(current, { id: "clear", dayId }));
+        setMessage("Selected day cleared successfully.");
+      } finally { revision.current += 1; clearing.current = false; }
+    },
   };
 }
