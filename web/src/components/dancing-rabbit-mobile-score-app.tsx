@@ -18,6 +18,7 @@ import { useTripScoreSync } from "@/lib/use-trip-score-sync";
 import { useCurrentTripDay } from "@/lib/use-current-trip-day";
 import { useHandicapOverrides } from "@/lib/dancing-rabbit-handicap-overrides";
 import { DancingRabbitDailyScorecards } from "@/components/dancing-rabbit-daily-scorecards";
+import { DancingRabbitAbcResults } from "@/components/dancing-rabbit-abc-results";
 
 export function DancingRabbitMobileScoreApp() {
   const [activeDayId, setActiveDayId] = useCurrentTripDay();
@@ -205,6 +206,7 @@ export function DancingRabbitMobileScoreApp() {
         </div>
       </section>
 
+      <DancingRabbitAbcResults result={activeResult} />
       <DancingRabbitDailyScorecards day={activeDay} scores={scores} />
 
       <section className="rounded-[1.25rem] border border-line bg-card/95 p-4">
