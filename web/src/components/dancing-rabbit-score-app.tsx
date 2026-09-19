@@ -392,6 +392,7 @@ export function DancingRabbitScoreApp() {
           <p className="text-sm font-semibold uppercase tracking-[0.18em] text-accent">
             Overall Standings
           </p>
+          <a href="/trips/dancing-rabbit-2026#overall-game" className="mt-2 inline-block text-sm font-semibold text-accent underline">View overall ranks, tie rules, and final prize payouts</a>
           <div className="mt-4 overflow-hidden rounded-[1rem] border border-line">
             <div className="grid grid-cols-[1.4fr_0.6fr_0.8fr_0.8fr_0.8fr] bg-accent-strong px-3 py-2 text-[11px] font-semibold uppercase tracking-[0.12em] !text-white">
               <div>Player</div>

@@ -42,21 +42,27 @@ export function DancingRabbitOverall() {
             <caption className="sr-only">Overall points by day and current rank</caption>
             <thead className="bg-accent-strong !text-white"><tr>
               <th scope="col" className="p-3">Rank</th><th scope="col" className="p-3">Player</th>
-              {days.map(result => <th scope="col" key={result.day.id} className="p-3 text-center">{result.day.label.slice(0, 3)}</th>)}
               <th scope="col" className="p-3 text-center">Points</th>
+              <th scope="col" className="p-3 text-center">Prize payout</th>
+              <th scope="col" className="p-3 text-center">Net after entry</th>
+              {days.map(result => <th scope="col" key={result.day.id} className="p-3 text-center">{result.day.label.slice(0, 3)}</th>)}
             </tr></thead>
             <tbody>{results.overallRows.map((row, index) => {
               const rank = results.overallRows.findIndex(other => other.points === row.points) + 1;
               const tied = results.overallRows.filter(other => other.points === row.points).length > 1;
               return <tr key={row.player.id} className={index % 2 === 0 ? "bg-background/70" : "bg-card"}>
                 <td className="p-3">{tied ? "T" : ""}{rank}</td><th scope="row" className="p-3 font-semibold">{row.player.name}</th>
-                {days.map(result => <td key={result.day.id} className="p-3 text-center">{!result.complete ? "—" : result.tied ? 0.5 : result.winnerPlayerIds.includes(row.player.id) ? 1 : 0}</td>)}
                 <td className="p-3 text-center text-lg font-semibold">{row.points}</td>
+                <td className="p-3 text-center font-semibold">{results.overallComplete ? formatMoney(row.overallPayout) : "Pending"}</td>
+                <td className="p-3 text-center">{results.overallComplete ? formatMoney(row.overallPayout - dancingRabbitTrip.overallBuyIn) : "Pending"}</td>
+                {days.map(result => <td key={result.day.id} className="p-3 text-center">{!result.complete ? "—" : result.tied ? 0.5 : result.winnerPlayerIds.includes(row.player.id) ? 1 : 0}</td>)}
               </tr>;
             })}</tbody>
           </table>
         </div>
         <p className="mt-4 text-sm text-muted">Completed rounds only: win = 1 point, tie = ½ point. Payments do not change standings. Equal points share a rank.</p>
+        <p className="mt-2 text-sm text-muted">Tied players split the combined prizes for the places they occupy equally. For example, two tied for first split $400 + $250 = $325 each; third receives $150. Daily winnings and bounties do not break ties.</p>
+        <p className="mt-2 text-sm text-muted">Prize payout is the overall award before the $100 entry. Net after entry subtracts that entry once and excludes daily bets and bounties. Amounts are displayed to the nearest cent. On a phone, swipe across the table for all columns.</p>
         <p className="mt-2 text-sm text-muted">Overall pool: {formatMoney(dancingRabbitTrip.overallBuyIn)} per player. Prizes: {dancingRabbitTrip.overallPayouts.map(formatMoney).join(" / ")}. {results.overallComplete ? "All rounds are complete; final payouts are available in scoring." : "Standings are provisional until all four rounds are complete."}</p>
       </>}
     </section>
