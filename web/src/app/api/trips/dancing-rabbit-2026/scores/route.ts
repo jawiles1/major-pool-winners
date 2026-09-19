@@ -10,6 +10,15 @@ type ScorePayload = {
 };
 
 export async function POST(request: Request) {
+  try {
+    return await saveScore(request);
+  } catch (error) {
+    console.error("[trip-scores] Save failed", error);
+    return NextResponse.json({ error: "Score was not confirmed saved. Please retry." }, { status: 503 });
+  }
+}
+
+async function saveScore(request: Request) {
   const payload = (await request.json()) as ScorePayload;
   const dayId = payload.dayId?.trim();
   const playerId = payload.playerId?.trim();
@@ -49,6 +58,15 @@ export async function POST(request: Request) {
 }
 
 export async function DELETE(request: Request) {
+  try {
+    return await clearScores(request);
+  } catch (error) {
+    console.error("[trip-scores] Clear failed", error);
+    return NextResponse.json({ error: "Scores could not be cleared. Please retry." }, { status: 503 });
+  }
+}
+
+async function clearScores(request: Request) {
   const payload = (await request.json()) as { dayId?: string };
   const dayId = payload.dayId?.trim();
 

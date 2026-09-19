@@ -1,10 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import {
   calculateDay,
-  createEmptyScoreState,
   dancingRabbitTrip,
   formatMoney,
   getCourse,
@@ -14,38 +13,17 @@ import {
   getPlayerDayHandicap,
   getPlayerHoleScore,
   type DayId,
-  type ScoreState,
 } from "@/lib/dancing-rabbit";
+import { useTripScoreSync } from "@/lib/use-trip-score-sync";
 import { useHandicapOverrides } from "@/lib/dancing-rabbit-handicap-overrides";
 import { DancingRabbitDailyScorecards } from "@/components/dancing-rabbit-daily-scorecards";
-
-const storageKey = "dancing-rabbit-2026-scores";
-const stateEndpoint = "/api/trips/dancing-rabbit-2026/state";
-const scoresEndpoint = "/api/trips/dancing-rabbit-2026/scores";
-
-function loadInitialScores(): ScoreState {
-  if (typeof window === "undefined") {
-    return createEmptyScoreState();
-  }
-
-  const stored = window.localStorage.getItem(storageKey);
-
-  if (!stored) {
-    return createEmptyScoreState();
-  }
-
-  try {
-    return { ...createEmptyScoreState(), ...JSON.parse(stored) };
-  } catch {
-    return createEmptyScoreState();
-  }
-}
 
 export function DancingRabbitMobileScoreApp() {
   const [activeDayId, setActiveDayId] = useState<DayId>("thursday");
   const [activePairingId, setActivePairingId] = useState("thursday-1");
   const [activeHoleNumber, setActiveHoleNumber] = useState(1);
-  const [scores, setScores] = useState<ScoreState>(() => loadInitialScores());
+  const sync = useTripScoreSync();
+  const { scores } = sync;
   const [handicapOverrides] = useHandicapOverrides();
 
   const activeDay = getDay(activeDayId);
@@ -61,31 +39,6 @@ export function DancingRabbitMobileScoreApp() {
     score.id.startsWith(activePairing.id),
   );
 
-  useEffect(() => {
-    window.localStorage.setItem(storageKey, JSON.stringify(scores));
-  }, [scores]);
-
-  useEffect(() => {
-    async function refreshScores() {
-      try {
-        const response = await fetch(stateEndpoint, { cache: "no-store" });
-
-        if (!response.ok) {
-          return;
-        }
-
-        const data = (await response.json()) as { scores?: ScoreState };
-        setScores({ ...createEmptyScoreState(), ...data.scores });
-      } catch {
-        // Keep the optimistic local state if the network is temporarily unavailable.
-      }
-    }
-
-    refreshScores();
-    const intervalId = window.setInterval(refreshScores, 5000);
-    return () => window.clearInterval(intervalId);
-  }, []);
-
   function changeDay(dayId: DayId) {
     const day = getDay(dayId);
 
@@ -94,33 +47,7 @@ export function DancingRabbitMobileScoreApp() {
     setActiveHoleNumber(1);
   }
 
-  function updateScore(playerId: string, value: string) {
-    const parsed = Number(value);
-
-    setScores((current) => ({
-      ...current,
-      [activeDayId]: {
-        ...current[activeDayId],
-        [playerId]: {
-          ...current[activeDayId]?.[playerId],
-          [activeHole.number]: Number.isFinite(parsed) && parsed > 0 ? parsed : 0,
-        },
-      },
-    }));
-
-    fetch(scoresEndpoint, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        dayId: activeDayId,
-        playerId,
-        holeNumber: activeHole.number,
-        gross: Number.isFinite(parsed) && parsed > 0 ? parsed : 0,
-      }),
-    }).catch(() => {
-      // Keep the local edit visible; polling will reconcile when connectivity returns.
-    });
-  }
+  function updateScore(playerId: string, value: string) { sync.updateScore(activeDayId, playerId, activeHole.number, value); }
 
   const enteredCount = activePairing.playerIds.filter((playerId) =>
     Boolean(scores[activeDayId]?.[playerId]?.[activeHole.number]),
@@ -128,6 +55,7 @@ export function DancingRabbitMobileScoreApp() {
 
   return (
     <div className="mx-auto grid w-full max-w-md gap-4">
+      <div role="status" className="rounded-xl border border-line bg-card p-3 text-sm"><p>{sync.message}</p><button type="button" onClick={sync.retry} className="mt-1 font-semibold underline">Retry / refresh</button></div>
       <section className="rounded-[1.25rem] border border-line bg-card/95 p-4">
         <h2 className="sr-only">{activeDay.label} scoring</h2>
         <div className="grid grid-cols-4 gap-1">

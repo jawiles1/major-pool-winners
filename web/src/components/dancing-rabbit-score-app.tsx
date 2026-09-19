@@ -1,10 +1,9 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 
 import {
   calculateTrip,
-  createEmptyScoreState,
   dancingRabbitTrip,
   formatMoney,
   getCourse,
@@ -16,40 +15,20 @@ import {
   type DaySettlement,
   type DayId,
   type RecordedPayment,
-  type ScoreState,
   type SettlementTransfer,
 } from "@/lib/dancing-rabbit";
+import { useTripScoreSync } from "@/lib/use-trip-score-sync";
 import { useHandicapOverrides } from "@/lib/dancing-rabbit-handicap-overrides";
 import { DancingRabbitDailyScorecards } from "@/components/dancing-rabbit-daily-scorecards";
 
-const storageKey = "dancing-rabbit-2026-scores";
-const stateEndpoint = "/api/trips/dancing-rabbit-2026/state";
-const scoresEndpoint = "/api/trips/dancing-rabbit-2026/scores";
 const paymentsEndpoint = "/api/trips/dancing-rabbit-2026/payments";
-
-function loadInitialScores(): ScoreState {
-  if (typeof window === "undefined") {
-    return createEmptyScoreState();
-  }
-
-  const stored = window.localStorage.getItem(storageKey);
-
-  if (!stored) {
-    return createEmptyScoreState();
-  }
-
-  try {
-    return { ...createEmptyScoreState(), ...JSON.parse(stored) };
-  } catch {
-    return createEmptyScoreState();
-  }
-}
 
 export function DancingRabbitScoreApp() {
   const [activeDayId, setActiveDayId] = useState<DayId>("thursday");
   const [activeHoleNumber, setActiveHoleNumber] = useState(1);
-  const [scores, setScores] = useState<ScoreState>(() => loadInitialScores());
-  const [payments, setPayments] = useState<RecordedPayment[]>([]);
+  const sync = useTripScoreSync();
+  const { scores } = sync;
+  const { payments, setPayments } = sync;
   const [paymentAction, setPaymentAction] = useState<string>();
   const [paymentError, setPaymentError] = useState<string>();
   const [handicapOverrides] = useHandicapOverrides();
@@ -66,77 +45,8 @@ export function DancingRabbitScoreApp() {
     (result) => result.day.id === activeDayId,
   );
 
-  useEffect(() => {
-    window.localStorage.setItem(storageKey, JSON.stringify(scores));
-  }, [scores]);
-
-  useEffect(() => {
-    async function refreshScores() {
-      try {
-        const response = await fetch(stateEndpoint, { cache: "no-store" });
-
-        if (!response.ok) {
-          return;
-        }
-
-        const data = (await response.json()) as {
-          scores?: ScoreState;
-          payments?: RecordedPayment[];
-        };
-        setScores({ ...createEmptyScoreState(), ...data.scores });
-        setPayments(data.payments ?? []);
-      } catch {
-        // Keep the optimistic local state if the network is temporarily unavailable.
-      }
-    }
-
-    refreshScores();
-    const intervalId = window.setInterval(refreshScores, 5000);
-    return () => window.clearInterval(intervalId);
-  }, []);
-
-  function updateScore(playerId: string, holeNumber: number, value: string) {
-    const parsed = Number(value);
-
-    setScores((current) => ({
-      ...current,
-      [activeDayId]: {
-        ...current[activeDayId],
-        [playerId]: {
-          ...current[activeDayId]?.[playerId],
-          [holeNumber]: Number.isFinite(parsed) && parsed > 0 ? parsed : 0,
-        },
-      },
-    }));
-
-    fetch(scoresEndpoint, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        dayId: activeDayId,
-        playerId,
-        holeNumber,
-        gross: Number.isFinite(parsed) && parsed > 0 ? parsed : 0,
-      }),
-    }).catch(() => {
-      // Keep the local edit visible; polling will reconcile when connectivity returns.
-    });
-  }
-
-  function clearDay() {
-    setScores((current) => ({
-      ...current,
-      [activeDayId]: createEmptyScoreState()[activeDayId],
-    }));
-
-    fetch(scoresEndpoint, {
-      method: "DELETE",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ dayId: activeDayId }),
-    }).catch(() => {
-      // Keep the local clear visible; polling will reconcile when connectivity returns.
-    });
-  }
+  function updateScore(playerId: string, holeNumber: number, value: string) { sync.updateScore(activeDayId, playerId, holeNumber, value); }
+  function clearDay() { sync.clearDay(activeDayId); }
 
   async function recordPayments(
     settlement: DaySettlement,
@@ -202,6 +112,7 @@ export function DancingRabbitScoreApp() {
 
   return (
     <div className="grid gap-6">
+      <div role="status" className="rounded-xl border border-line bg-card p-3 text-sm"><p>{sync.message}</p><button type="button" onClick={sync.retry} className="mt-1 font-semibold underline">Retry / refresh</button></div>
       <section className="rounded-[1.5rem] border border-line bg-card/90 p-4 sm:p-5">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>

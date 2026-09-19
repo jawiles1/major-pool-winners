@@ -55,15 +55,16 @@ export function useHandicapOverrides(): [
 
   useEffect(() => {
     async function refresh() {
+      if (document.hidden) return;
       try {
         setOverrides(await loadHandicapOverrides());
       } catch {
-        setOverrides(createEmptyHandicapOverrideState());
+        // Retain the last known handicaps while the shared database is unavailable.
       }
     }
 
     refresh();
-    const intervalId = window.setInterval(refresh, 5000);
+    const intervalId = window.setInterval(refresh, 60000);
     window.addEventListener(handicapOverrideEventName, refresh);
     return () => {
       window.clearInterval(intervalId);

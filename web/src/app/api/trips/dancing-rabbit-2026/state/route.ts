@@ -11,6 +11,15 @@ import { prisma } from "@/lib/prisma";
 export const dynamic = "force-dynamic";
 
 export async function GET() {
+  try {
+    return await loadState();
+  } catch (error) {
+    console.error("[trip-state] Database read failed", error);
+    return NextResponse.json({ error: "Shared scoring is temporarily unavailable. Please retry." }, { status: 503, headers: { "Cache-Control": "no-store" } });
+  }
+}
+
+async function loadState() {
   const [scoreRows, handicapRows, paymentRows] = await Promise.all([
     prisma.dancingRabbitScore.findMany(),
     prisma.dancingRabbitHandicapOverride.findMany(),
@@ -51,5 +60,5 @@ export async function GET() {
       paidAt: payment.paidAt.toISOString(),
     })),
     updatedAt,
-  });
+  }, { headers: { "Cache-Control": "no-store" } });
 }
