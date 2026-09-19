@@ -1,10 +1,10 @@
 import Link from "next/link";
+import { DancingRabbitPlayerHandicaps } from "@/components/dancing-rabbit-player-handicaps";
 
 import {
   dancingRabbitTrip,
   formatMoney,
   getCourse,
-  getCourseHandicap,
 } from "@/lib/dancing-rabbit";
 
 export default function DancingRabbitTripPage() {
@@ -116,25 +116,7 @@ export default function DancingRabbitTripPage() {
             <p className="text-sm font-semibold uppercase tracking-[0.2em] text-accent">
               Players
             </p>
-            <div className="mt-5 overflow-hidden rounded-[1.25rem] border border-line">
-              <div className="grid grid-cols-[1.4fr_0.7fr_0.7fr] bg-accent-strong px-4 py-3 text-xs font-semibold uppercase tracking-[0.14em] !text-white">
-                <div>Player</div>
-                <div>Azaleas</div>
-                <div>Oaks</div>
-              </div>
-              {dancingRabbitTrip.players.map((player, index) => (
-                <div
-                  key={player.id}
-                  className={`grid grid-cols-[1.4fr_0.7fr_0.7fr] px-4 py-3 text-sm ${
-                    index % 2 === 0 ? "bg-background/70" : "bg-card"
-                  }`}
-                >
-                  <div className="font-semibold">{player.name}</div>
-                  <div>{getCourseHandicap(player, "azaleas")}</div>
-                  <div>{getCourseHandicap(player, "oaks")}</div>
-                </div>
-              ))}
-            </div>
+            <DancingRabbitPlayerHandicaps />
           </article>
 
           <article className="rounded-[2rem] border border-line bg-card/90 p-6 sm:p-8">
