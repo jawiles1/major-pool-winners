@@ -721,19 +721,17 @@ function calculateSunday(day: TripDay, scores: ScoreState, overrides?: HandicapO
   const playerNet: Record<PlayerId, number> = {};
   const moneyLines: MoneyLine[] = [];
 
-  for (const key of ["gross", "net"] as const) {
-    if (totals[0][key] === totals[1][key]) {
-      continue;
-    }
-
-    const winner = totals[0][key] < totals[1][key] ? totals[0].pairing : totals[1].pairing;
+  const firstCombined = totals[0].gross + totals[0].net;
+  const secondCombined = totals[1].gross + totals[1].net;
+  if (firstCombined !== secondCombined) {
+    const winner = firstCombined < secondCombined ? totals[0].pairing : totals[1].pairing;
     const loser = winner.id === totals[0].pairing.id ? totals[1].pairing : totals[0].pairing;
     const settlement = splitPairingStake(
       day,
       winner,
       loser,
       day.stakePerPlayer ?? 0,
-      `Sunday best ${key}`,
+      "Sunday combined low gross and low net",
     );
 
     for (const [playerId, amount] of Object.entries(settlement.playerNet)) {
@@ -744,8 +742,6 @@ function calculateSunday(day: TripDay, scores: ScoreState, overrides?: HandicapO
   }
 
   const complete = hasAllScores(day, scores);
-  const firstCombined = totals[0].gross + totals[0].net;
-  const secondCombined = totals[1].gross + totals[1].net;
   const tied = complete && firstCombined === secondCombined;
   const winner =
     complete && !tied
@@ -757,7 +753,7 @@ function calculateSunday(day: TripDay, scores: ScoreState, overrides?: HandicapO
   return {
     day,
     summaries: [
-      "Best gross and best net are scored independently on each hole.",
+      "One low gross plus one low net per hole: the combined 18-hole total decides one $50-per-player bet.",
       "The same player may count for both gross and net on the same hole.",
     ],
     playerNet,
