@@ -22,6 +22,7 @@ import { useHandicapOverrides } from "@/lib/dancing-rabbit-handicap-overrides";
 import { DancingRabbitDailyScorecards } from "@/components/dancing-rabbit-daily-scorecards";
 import { DancingRabbitAbcResults } from "@/components/dancing-rabbit-abc-results";
 import { DancingRabbitSundayResults } from "@/components/dancing-rabbit-sunday-results";
+import { DancingRabbitScrambleInput } from "@/components/dancing-rabbit-scramble-input";
 
 const paymentsEndpoint = "/api/trips/dancing-rabbit-2026/payments";
 
@@ -179,10 +180,10 @@ export function DancingRabbitScoreApp() {
             <div className="flex items-end justify-between gap-4">
               <div>
                 <p className="text-sm font-semibold text-muted">
-                  Enter every player&apos;s gross score for the selected hole.
+                  {activeDay.format === "scramble" ? "Enter one gross scramble score per team for the selected hole." : "Enter every player's gross score for the selected hole."}
                 </p>
                 <p className="mt-1 text-xs text-muted">
-                  Net double bogey cap is applied to every entered score.
+                  {activeDay.format === "scramble" ? "No strokes, no score cap. Bogey or worse costs $10 per player; eagle bounties off." : "Net double bogey cap is applied to every entered score."}
                 </p>
               </div>
               <p className="hidden text-xs font-semibold uppercase tracking-[0.16em] text-accent sm:block">
@@ -244,7 +245,9 @@ export function DancingRabbitScoreApp() {
           </div>
 
           <div className="mt-4 grid gap-4">
-            {activeDay.pairings.map((pairing) => (
+            {activeDay.format === "scramble" ? activeDay.pairings.map(pairing => (
+              <DancingRabbitScrambleInput key={pairing.id} pairing={pairing} hole={activeHole} value={scores[activeDayId]?.[pairing.id]?.[activeHole.number]} onChange={value => updateScore(pairing.id, activeHole.number, value)} />
+            )) : activeDay.pairings.map((pairing) => (
               <article key={pairing.id} className="rounded-[1rem] border border-line bg-background/70 p-3">
                 <div className="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
                   <div>

@@ -25,9 +25,13 @@ async function saveScore(request: Request) {
   const playerId = payload.playerId?.trim();
   const holeNumber = Number(payload.holeNumber);
   const gross = Number(payload.gross);
+  const day = dancingRabbitTrip.days.find(day => day.id === dayId);
+  const validTarget = day?.format === "scramble"
+    ? day.pairings.some(pairing => pairing.id === playerId)
+    : day?.pairings.some(pairing => pairing.playerIds.includes(playerId ?? ""));
 
-  if (!dayId || !playerId || !Number.isInteger(holeNumber) || holeNumber < 1 || holeNumber > 18) {
-    return NextResponse.json({ error: "Invalid score target." }, { status: 400 });
+  if (!dayId || !playerId || !validTarget || !Number.isInteger(holeNumber) || holeNumber < 1 || holeNumber > 18) {
+    return NextResponse.json({ error: "Invalid score target. Refresh the page; Sunday uses team scramble scores." }, { status: 400 });
   }
 
   if (!Number.isFinite(gross) || gross <= 0) {

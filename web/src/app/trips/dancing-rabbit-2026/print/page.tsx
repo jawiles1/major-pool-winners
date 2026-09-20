@@ -67,7 +67,7 @@ function ScorecardSheet({
   const course = getCourse(day.courseId);
   const totalPar = course.holes.reduce((sum, hole) => sum + hole.par, 0);
   const totalYards = course.holes.reduce((sum, hole) => sum + hole.yards, 0);
-  const playerIds = pairing.playerIds;
+  const playerIds = day.format === "scramble" ? [] : pairing.playerIds;
 
   return (
     <section className="scorecard-print-sheet break-after-page bg-white p-4 print:p-0">
@@ -93,6 +93,7 @@ function ScorecardSheet({
         <div className="rounded bg-[#e6eee9] py-2 text-center text-sm font-semibold uppercase tracking-[0.08em] text-[#075b3f]">
           {getPotLine(day)}
         </div>
+        {day.format === "scramble" && <p className="mt-2 text-sm">Team: {pairing.playerIds.map(id => getPlayer(id).name).join(", ")}</p>}
       </div>
 
       <div className="px-8 pt-5">
@@ -263,6 +264,7 @@ function BlankGameRow({
 }
 
 function getFormatSubtitle(day: TripDay): string {
+  if (day.format === "scramble") return "4-man gross scramble";
   if (day.format === "two-best-net") {
     return "2 best net balls of 4";
   }
@@ -279,6 +281,7 @@ function getFormatSubtitle(day: TripDay): string {
 }
 
 function getPotLine(day: TripDay): string {
+  if (day.format === "scramble") return "$50 per player | Each bogey-or-worse hole: $10 penalty per player";
   if (day.format === "round-robin-press") {
     return `${formatMoney(day.matchStake ?? 0)} matches | automatic ${formatMoney(day.pressStake ?? 0)} presses at 2 down`;
   }
@@ -295,6 +298,7 @@ function getGameRows(day: TripDay): Array<{
   sublabel?: string;
   accent?: boolean;
 }> {
+  if (day.format === "scramble") return [{ label: "Team gross", sublabel: "One scramble score", accent: true }, { label: "Bogey penalty", sublabel: "$10/man for bogey or worse" }];
   if (day.format === "abc-best-ball") {
     return [
       { label: "A ball", sublabel: "Lowest net ball", accent: true },
@@ -327,6 +331,7 @@ function getGameRows(day: TripDay): Array<{
 }
 
 function getScoringNotes(day: TripDay): string[] {
+  if (day.format === "scramble") return ["Record one gross scramble score per team per hole. No handicap strokes or score caps.", "Each bogey-or-worse hole costs $10 per player to the opposing team (one penalty, even for double bogey or worse).", "Eagle bounties are off for Sunday."];
   const shared = [
     "Record each player's gross score. A green dot marks a hole where that player receives one handicap stroke.",
     "Maximum score on every hole: net double bogey (par + 2 + handicap strokes received).",
@@ -366,6 +371,7 @@ function getScoringNotes(day: TripDay): string[] {
 }
 
 function getRulesNotes(day: TripDay): string[] {
+  if (day.format === "scramble") return ["Lowest 18-hole gross total wins $50 and 1 overall point per player. Penalties do not change the winner.", "A gross tie: no main-bet payment, ½ overall point each; bogey penalties still apply."];
   if (day.format === "two-best-net") {
     return [
       "Winning foursome: lowest 18-hole team total.",

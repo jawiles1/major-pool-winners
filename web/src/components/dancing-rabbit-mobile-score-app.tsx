@@ -20,6 +20,7 @@ import { useHandicapOverrides } from "@/lib/dancing-rabbit-handicap-overrides";
 import { DancingRabbitDailyScorecards } from "@/components/dancing-rabbit-daily-scorecards";
 import { DancingRabbitAbcResults } from "@/components/dancing-rabbit-abc-results";
 import { DancingRabbitSundayResults } from "@/components/dancing-rabbit-sunday-results";
+import { DancingRabbitScrambleInput } from "@/components/dancing-rabbit-scramble-input";
 
 export function DancingRabbitMobileScoreApp() {
   const [activeDayId, setActiveDayId] = useCurrentTripDay();
@@ -52,7 +53,8 @@ export function DancingRabbitMobileScoreApp() {
 
   function updateScore(playerId: string, value: string) { sync.updateScore(activeDayId, playerId, activeHole.number, value); }
 
-  const enteredCount = activePairing.playerIds.filter((playerId) =>
+  const scoreIds = activeDay.format === "scramble" ? [activePairing.id] : activePairing.playerIds;
+  const enteredCount = scoreIds.filter((playerId) =>
     Boolean(scores[activeDayId]?.[playerId]?.[activeHole.number]),
   ).length;
 
@@ -114,7 +116,7 @@ export function DancingRabbitMobileScoreApp() {
           </div>
           <div className="rounded-[0.85rem] bg-background px-3 py-2 text-center">
             <p className="text-2xl font-semibold">
-              {enteredCount}/{activePairing.playerIds.length}
+              {enteredCount}/{scoreIds.length}
             </p>
             <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-muted">
               Entered
@@ -141,7 +143,7 @@ export function DancingRabbitMobileScoreApp() {
         </div>
 
         <div className="mt-4 grid gap-3">
-          {activePairing.playerIds.map((playerId) => {
+          {activeDay.format === "scramble" ? <DancingRabbitScrambleInput pairing={activePairing} hole={activeHole} value={scores[activeDayId]?.[activePairing.id]?.[activeHole.number]} onChange={value => updateScore(activePairing.id, value)} /> : activePairing.playerIds.map((playerId) => {
             const player = getPlayer(playerId);
             const score = getPlayerHoleScore(
               activeDay,

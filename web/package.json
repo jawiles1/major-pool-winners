@@ -8,6 +8,7 @@
     "vercel-build": "next build",
     "start": "next start",
     "lint": "eslint",
+    "test:scramble": "node scripts/test-scramble.cjs",
     "postinstall": "prisma generate",
     "db:push": "prisma db push"
   },

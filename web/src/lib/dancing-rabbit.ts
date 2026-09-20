@@ -7,7 +7,8 @@ export type TripFormat =
   | "two-best-net"
   | "round-robin-press"
   | "abc-best-ball"
-  | "gross-and-net";
+  | "gross-and-net"
+  | "scramble";
 export type SkinsMode = "gross" | "net" | "both" | "none";
 
 export type Hole = {
@@ -56,6 +57,7 @@ export type TripDay = {
   courseId: CourseId;
   format: TripFormat;
   stakePerPlayer?: number;
+  bogeyPenaltyPerPlayer?: number;
   matchStake?: number;
   pressStake?: number;
   pressTriggerDown?: number;
@@ -134,6 +136,7 @@ export type DailyResult = {
   tied: boolean;
   complete: boolean;
   fridayMatches?: FridayMatchResult[];
+  scrambleTeams?: { pairing: Pairing; total: number; entered: number; bogeyHoles: number[]; mainNet: number; penaltyNet: number }[];
 };
 
 export type FridayMatchResult = {
@@ -315,6 +318,10 @@ export function createEmptyScoreState(): ScoreState {
     for (const player of dancingRabbitTrip.players) {
       state[day.id][player.id] = {};
     }
+    // Team IDs use the existing score storage without copying scores to players.
+    if (day.format === "scramble") {
+      for (const pairing of day.pairings) state[day.id][pairing.id] = {};
+    }
 
     return state;
   }, {} as ScoreState);
@@ -377,6 +384,8 @@ function splitPairingStake(
 }
 
 function hasAllScores(day: TripDay, scores: ScoreState): boolean {
+  if (day.format === "scramble") return day.pairings.every(pairing =>
+    getCourse(day.courseId).holes.every(hole => (scores[day.id]?.[pairing.id]?.[hole.number] ?? 0) > 0));
   return day.pairings
     .flatMap((pairing) => pairing.playerIds)
     .every((playerId) =>
@@ -778,7 +787,40 @@ function calculateSunday(day: TripDay, scores: ScoreState, overrides?: HandicapO
   };
 }
 
+function calculateScramble(day: TripDay, scores: ScoreState): DailyResult {
+  const holes = getCourse(day.courseId).holes;
+  const teams = day.pairings.map(pairing => {
+    const entered = holes.filter(hole => (scores[day.id]?.[pairing.id]?.[hole.number] ?? 0) > 0);
+    return { pairing, entered: entered.length,
+      total: entered.reduce((sum, hole) => sum + scores[day.id][pairing.id][hole.number], 0),
+      bogeyHoles: entered.filter(hole => scores[day.id][pairing.id][hole.number] > hole.par).map(hole => hole.number),
+      mainNet: 0, penaltyNet: 0 };
+  });
+  const complete = hasAllScores(day, scores);
+  const tied = complete && teams[0].total === teams[1].total;
+  const winner = complete && !tied ? (teams[0].total < teams[1].total ? teams[0] : teams[1]) : undefined;
+  const playerNet: Record<PlayerId, number> = {};
+  const moneyLines: MoneyLine[] = [];
+  if (complete) {
+    for (const team of teams) {
+      const other = teams.find(candidate => candidate !== team)!;
+      team.mainNet = !winner ? 0 : (winner === team ? 1 : -1) * (day.stakePerPlayer ?? 0);
+      team.penaltyNet = (other.bogeyHoles.length - team.bogeyHoles.length) * (day.bogeyPenaltyPerPlayer ?? 0);
+      if (winner === team) moneyLines.push(...splitPairingStake(day, team.pairing, other.pairing, day.stakePerPlayer ?? 0, "Sunday scramble gross winner").moneyLines);
+      for (const hole of team.bogeyHoles) {
+        moneyLines.push(...splitPairingStake(day, other.pairing, team.pairing, day.bogeyPenaltyPerPlayer ?? 0, `Sunday scramble bogey or worse hole ${hole}`).moneyLines);
+      }
+      for (const id of team.pairing.playerIds) playerNet[id] = team.mainNet + team.penaltyNet;
+    }
+  }
+  return { day, complete, tied, winnerPlayerIds: winner?.pairing.playerIds ?? [], playerNet, moneyLines,
+    scrambleTeams: teams,
+    summaries: ["Four-man scramble: one uncapped gross team score per hole; no handicap strokes or eagle bounties.", "Lowest gross total wins $50 per player and one overall point each. Each bogey-or-worse hole costs $10 per player to the other team. Penalties do not change the golf winner."],
+    teamScores: teams.map(team => ({ id: team.pairing.id, label: team.pairing.name, value: team.total, note: `${team.entered}/18 holes · ${team.bogeyHoles.length} bogey-or-worse holes` })) };
+}
+
 export function calculateDay(day: TripDay, scores: ScoreState, overrides?: HandicapOverrideState): DailyResult {
+  if (day.format === "scramble") return calculateScramble(day, scores);
   if (day.format === "two-best-net") {
     return calculateThursday(day, scores, overrides);
   }
@@ -807,6 +849,7 @@ export function calculateBounties(
   const playerNet: Record<PlayerId, number> = {};
 
   for (const day of dancingRabbitTrip.days) {
+    if (day.format === "scramble") continue;
     const course = getCourse(day.courseId);
 
     for (const hole of course.holes) {

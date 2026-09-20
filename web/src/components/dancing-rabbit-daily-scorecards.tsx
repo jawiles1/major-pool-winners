@@ -2,13 +2,14 @@ import { dancingRabbitTrip, getCourse, type ScoreState, type TripDay } from "@/l
 
 export function DancingRabbitDailyScorecards({ day, scores }: { day: TripDay; scores: ScoreState }) {
   const course = getCourse(day.courseId);
+  const entries = day.format === "scramble" ? day.pairings : dancingRabbitTrip.players;
 
   return (
     <section id="daily-scorecards" className="rounded-[1.25rem] border border-line bg-card/95 p-4 scroll-mt-4">
       <h2 className="text-xl font-semibold">{day.label} scorecards</h2>
-      <p className="mt-1 text-sm text-muted">Actual gross strokes as entered, before handicap or scoring caps. Tap a player to compare each hole with your paper card.</p>
+      <p className="mt-1 text-sm text-muted">{day.format === "scramble" ? "Team scramble scores, gross only with no cap. Tap a team to compare with your paper card." : "Actual gross strokes as entered, before handicap or scoring caps. Tap a player to compare each hole with your paper card."}</p>
       <div className="mt-4 grid gap-2">
-        {dancingRabbitTrip.players.map((player) => {
+        {entries.map((player) => {
           const holes = course.holes.map((hole) => {
             const value = scores[day.id]?.[player.id]?.[hole.number];
             return { ...hole, score: Number.isFinite(value) && value > 0 ? value : undefined };
